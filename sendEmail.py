@@ -24,7 +24,7 @@ server.login(from_email, password)
 # 遍历Excel文件中的每一行
 for row in sheet.iter_rows(min_row=2, values_only=True):
     to_email = row[0]
-    file_name = row[1]
+    file_name = row[1]+".xlsx"
 
     # 检查文件是否存在
     attachment_path = r'D:\佣金确认\email\{}'.format(file_name)  # 绝对路径
