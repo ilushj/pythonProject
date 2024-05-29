@@ -1,12 +1,12 @@
+import os
 import smtplib
 from email import encoders
-from email.mime.base import MIMEBase
 from email.header import Header
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 import openpyxl
-import os
 
 file_path = r'D:\佣金确认\email\通讯录.xlsx'
 # 读取Excel文件
@@ -39,7 +39,7 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
     msg['Subject'] = file_name + '佣金确认'
 
     # 添加文本消息
-    text = "您好，附件中是您的佣金及业绩，请查收。（此邮件不要回复！）"
+    text = "您好，附件中是您4月的佣金及业绩，请查收。（备注：1、附件不包含合作业务；2、此邮件不要回复！3、昨天是系统测试合作项目数据，所有金额以今天的邮件为准。）"
     msg.attach(MIMEText(text, 'plain'))
 
     # 添加附件
