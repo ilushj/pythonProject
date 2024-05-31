@@ -51,20 +51,18 @@ for index, row_b in df_B.iterrows():
     # 在A表中查找相同身份证的数据行
     match_row_a = df_A[df_A[id_column] == row_b[id_column]]
 
+    # 如果找到匹配的行
     if not match_row_a.empty:
         # 检查指定的列是否相同
-        diff_values = []
+        diff_columns = []
         for col in compare_columns:
             if match_row_a[col].iloc[0] != row_b[col]:
-                diff_values.append((col, match_row_a[col].iloc[0], row_b[col]))
+                diff_columns.append(col)
 
-        # 如果有不同的列，则将该行数据保存到替换表中并打印差异
-        if diff_values:
+        # 如果有不同的列，则将该行数据保存到替换表中
+        if diff_columns:
+            row_b['不同列名'] = ', '.join(diff_columns)
             df_replace = pd.concat([df_replace, row_b.to_frame().T], ignore_index=True)
-            print(f"身份证号码为 {row_b[id_column]} 的数据存在差异:")
-            for col, value_a, value_b in diff_values:
-                print(f"  {col}: A表={value_a}, B表={value_b}")
-            print()  # 添加空行作为分隔
 
 # 构造保存结果的文件名
 result_filename = os.path.join(os.path.dirname(filename_A), '比对结果.xlsx')
