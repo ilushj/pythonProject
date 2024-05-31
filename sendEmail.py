@@ -8,14 +8,14 @@ from email.mime.text import MIMEText
 
 import openpyxl
 
-file_path = r'D:\佣金确认\email\通讯录.xlsx'
+file_path = r'D:\佣金明细\email\通讯录.xlsx'
 # 读取Excel文件
 workbook = openpyxl.load_workbook(file_path)
 sheet = workbook.active
 
 # 设置发件人邮箱和密码
-from_email = 'shihj@qidianbx.com'
-password = 'Ilushj771119'
+from_email = 'customer13@qidianbx.com'
+password = 'Qd6657bx'
 
 # 连接SMTP服务器
 server = smtplib.SMTP_SSL('smtp.qiye.aliyun.com', 465)
@@ -27,7 +27,7 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
     file_name = row[1]+".xlsx"
 
     # 检查文件是否存在
-    attachment_path = r'D:\佣金确认\email\{}'.format(file_name)  # 绝对路径
+    attachment_path = r'D:\佣金明细\email\{}'.format(file_name)  # 绝对路径
     if not os.path.exists(attachment_path):
         print(f"文件 '{file_name}' 不存在，跳过发送邮件。")
         continue
@@ -36,10 +36,10 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
     msg = MIMEMultipart()
     msg['From'] = from_email
     msg['To'] = to_email
-    msg['Subject'] = file_name + '佣金确认'
+    msg['Subject'] = file_name + '佣金明细'
 
     # 添加文本消息
-    text = "您好，附件中是您4月的佣金及业绩，请查收。（备注：1、附件不包含合作业务；2、此邮件不要回复！3、昨天是系统测试合作项目数据，所有金额以今天的邮件为准。）"
+    text = file_name + "您好: 附件中是您的佣金明细，请查收。（备注：此邮件不要回复！）"
     msg.attach(MIMEText(text, 'plain'))
 
     # 添加附件
