@@ -19,7 +19,7 @@ def process_excel_files(directory, output_directory):
     ws_new = wb_new.active
 
     # 设置新工作表的标题行
-    ws_new.append(["姓名", "身份证", "护照", "变更类型", "生效日期", "工种", "有无社保", "备注"])
+    ws_new.append(["姓名", "身份证", f, "生效日期", "工种", "有无社保", "备注"])
     tomorrow_date = datetime.now() + timedelta(days=1)
     tomorrow_date = tomorrow_date.date()  # 将日期转换为日期对象
     # 遍历目录下的所有xlsx文件
