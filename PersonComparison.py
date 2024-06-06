@@ -2,21 +2,32 @@ import pandas as pd
 from datetime import datetime, timedelta
 import os
 import warnings
+import json
 
 # 忽略特定警告
 warnings.filterwarnings("ignore", message="Workbook contains no default style, apply openpyxl's default")
+# 读取配置文件
+config_path = 'D:\\数据比对\\config.ini'
+with open(config_path, 'r', encoding='utf-8') as config_file:
+    config = json.load(config_file)
+
+# 从配置文件中获取 id_column, compare_columns, filename_A 和 filename_B
+id_column = config.get('id_column')  # 默认值为 '身份证'
+compare_columns = config.get('compare_columns')  # 默认值为一个示例列表
+filename_A = config.get('filename_A', 'D:\\数据比对\\old.xlsx')  # 默认值为一个示例文件名
+filename_B = config.get('filename_B', 'D:\\数据比对\\new.xlsx')  # 默认值为一个示例文件名
 
 # 获取今天和昨天的日期
-today = datetime.today()
-yesterday = today - timedelta(days=1)
+# today = datetime.today()
+# yesterday = today - timedelta(days=1)
 
 # 构造文件名
-filename_A = os.path.join('D:\\数据比对', yesterday.strftime('%Y%m%d') + '.xlsx')
-filename_B = os.path.join('D:\\数据比对', today.strftime('%Y%m%d') + '.xlsx')
+# filename_A = os.path.join('D:\\数据比对', yesterday.strftime('%Y%m%d') + '.xlsx')
+# filename_B = os.path.join('D:\\数据比对', today.strftime('%Y%m%d') + '.xlsx')
 
 # 打印文件名，检查文件名是否正确
-print(f"昨日文件名: {filename_A}")
-print(f"今日文件名: {filename_B}")
+print(f"旧文件名: {filename_A}")
+print(f"新文件名: {filename_B}")
 
 # 检查文件是否存在
 if not os.path.exists(filename_A):
@@ -31,9 +42,6 @@ if not os.path.exists(filename_B):
 df_A = pd.read_excel(filename_A, engine='openpyxl')
 df_B = pd.read_excel(filename_B, engine='openpyxl')
 
-# 获取身份证列名
-id_column = '身份证'
-
 # 1. 获取A表中存在，B表中不存在的数据条目
 df_jianbao = df_A[~df_A[id_column].isin(df_B[id_column])]
 
@@ -44,7 +52,7 @@ df_jiabao = df_B[~df_B[id_column].isin(df_A[id_column])]
 df_replace = pd.DataFrame(columns=df_B.columns)
 
 # 指定要比对的列
-compare_columns = ['雇主单位', '职业类别', '工种', '用工单位', '方案']
+# compare_columns = ['雇主单位', '职业类别', '工种', '用工单位', '方案']
 
 # 遍历B表中的每一行数据
 for index, row_b in df_B.iterrows():
