@@ -1,5 +1,4 @@
 import pandas as pd
-from datetime import datetime, timedelta
 import os
 import warnings
 import json
@@ -16,14 +15,6 @@ id_column = config.get('id_column')  # 默认值为 '身份证'
 compare_columns = config.get('compare_columns')  # 默认值为一个示例列表
 filename_A = config.get('filename_A', 'D:\\数据比对\\old.xlsx')  # 默认值为一个示例文件名
 filename_B = config.get('filename_B', 'D:\\数据比对\\new.xlsx')  # 默认值为一个示例文件名
-
-# 获取今天和昨天的日期
-# today = datetime.today()
-# yesterday = today - timedelta(days=1)
-
-# 构造文件名
-# filename_A = os.path.join('D:\\数据比对', yesterday.strftime('%Y%m%d') + '.xlsx')
-# filename_B = os.path.join('D:\\数据比对', today.strftime('%Y%m%d') + '.xlsx')
 
 # 打印文件名，检查文件名是否正确
 print(f"旧文件名: {filename_A}")
@@ -50,9 +41,6 @@ df_jiabao = df_B[~df_B[id_column].isin(df_A[id_column])]
 
 # 3. 获取A表和B表中都存在，但其它列数据不同的数据条目（替换）
 df_replace = pd.DataFrame(columns=df_B.columns)
-
-# 指定要比对的列
-# compare_columns = ['雇主单位', '职业类别', '工种', '用工单位', '方案']
 
 # 遍历B表中的每一行数据
 for index, row_b in df_B.iterrows():
@@ -82,5 +70,3 @@ with pd.ExcelWriter(result_filename) as writer:
     df_replace.to_excel(writer, sheet_name='替换', index=False)
 
 print("比对结果已保存到比对结果.xlsx文件中。")
-
-
