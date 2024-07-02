@@ -50,7 +50,7 @@ else:
 
 # 修改批增数据中的特定列
 if not df_batch_add.empty:
-    # 条件一：投保方案等于“雇主责任险（1-4类）30万-17”
+    # 条件一：投保方案等于“雇主责任险（1-4类）50万-17”
     mask1 = df_batch_add['投保方案'] == '雇主责任险（1-4类）50万-17'
     df_batch_add.loc[mask1, '新职业类别'] = '四类职业'
     df_batch_add.loc[mask1, '新岗位名称'] = '普工2'
@@ -75,6 +75,16 @@ if not df_batch_add.empty:
     df_batch_add.loc[mask5, '新职业类别'] = '四类职业'
     df_batch_add.loc[mask5, '新岗位名称'] = '普工1'
 
+    # 条件六：投保方案等于“雇主责任险（1-3类）10+1万-9”
+    mask6 = df_batch_add['投保方案'] == '雇主责任险（1-3类）10+1万-9'
+    df_batch_add.loc[mask6, '新职业类别'] = '三类职业'
+    df_batch_add.loc[mask6, '新岗位名称'] = '邮件分拣员-邮件分拣员-1'
+
+    # 条件七：投保方案等于“雇主责任险（5类）50万-52”
+    mask7 = df_batch_add['投保方案'] == '雇主责任险（5类）50万-52'
+    df_batch_add.loc[mask7, '新职业类别'] = '五类职业'
+    df_batch_add.loc[mask7, '新岗位名称'] = '普工4'
+
 # 找到重复数据
 if not df_batch_add.empty and not df_batch_subtract.empty:
     # 使用“新雇员证件号码”和“投保方案”作为键进行合并
@@ -82,13 +92,23 @@ if not df_batch_add.empty and not df_batch_subtract.empty:
                          suffixes=('_add', '_subtract'))
 
     # 标记在 df_batch_subtract 中与 merged_df 中相同的行
-    merged_flag = pd.merge(df_batch_subtract, merged_df[['新雇员证件号码']], on='新雇员证件号码', how='left',
+    merged_flag_subtract = pd.merge(df_batch_subtract, merged_df[['新雇员证件号码']], on='新雇员证件号码', how='left',
+                           indicator=True)
+
+    # 标记在 df_batch_subtract 中与 merged_df 中相同的行
+    merged_flag_add = pd.merge(df_batch_add, merged_df[['新雇员证件号码']], on='新雇员证件号码', how='left',
                            indicator=True)
 
     # 从 df_batch_subtract 中删除与 merged_df 中相同的行
-    df_batch_subtract = merged_flag[merged_flag['_merge'] != 'both'].drop(columns='_merge')
+    df_batch_subtract = merged_flag_subtract[merged_flag_subtract['_merge'] != 'both'].drop(columns='_merge')
+
+    df_batch_add = merged_flag_add[merged_flag_add['_merge'] != 'both'].drop(columns='_merge')
+    # 从df_batch_add中删除与merged_df中相同的行
+    # df_batch_add = df_batch_add[~df_batch_add[['新雇员证件号码', '投保方案']].isin(merged_df[['新雇员证件号码', '投保方案']]).all(axis=1)]
+
 else:
     merged_df = pd.DataFrame()
+
 # 比对和处理最新雇员清单
 replacement_data = []
 
@@ -105,8 +125,7 @@ if not latest_employee_list.empty:
             else:
                 combined_row = pd.concat([match.iloc[0], row], axis=0)
                 replacement_data.append(combined_row)
-                row_dropped = row.drop(labels=['投保方案'])
-                df_batch_subtract = pd.concat([df_batch_subtract, row_dropped.to_frame().T], ignore_index=True)
+                df_batch_add.drop(index, inplace=True)
 
 replacement_df = pd.DataFrame(replacement_data)
 
