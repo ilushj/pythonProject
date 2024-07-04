@@ -58,7 +58,7 @@ if not df_batch_add.empty:
     # 条件二：投保方案等于“雇主责任险（1-4类）80万-30”
     mask2 = df_batch_add['投保方案'] == '雇主责任险（1-4类）80万-30'
     df_batch_add.loc[mask2, '新职业类别'] = '四类职业'
-    df_batch_add.loc[mask2, '新岗位名称'] = '普工2'
+    df_batch_add.loc[mask2, '新岗位名称'] = '普工3'
 
     # 条件三：投保方案等于“G_雇主责任险（1-3类）80+20万-36”
     mask3 = df_batch_add['投保方案'] == 'G_雇主责任险（1-3类）80+20万-36'
