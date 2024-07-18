@@ -4,7 +4,7 @@ import json
 import pandas as pd
 
 
-# 定义登录函数
+# 登录函数
 def login():
     url = 'https://test.ekangonline.com/kaimai/user/login'
     username = 'test21'
