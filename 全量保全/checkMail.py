@@ -13,7 +13,7 @@ EMAIL = "ilushj@hotmail.com"
 PASSWORD = "771119+_"
 IMAP_SERVER = "imap-mail.outlook.com"
 IMAP_PORT = 993
-SAVE_DIRECTORY = r"d:\千伏"
+SAVE_DIRECTORY = r"d:\全量投保"
 
 
 # 监控邮件并保存附件
@@ -30,11 +30,11 @@ def check_email():
     mail.select("inbox")
 
     # 获取昨天的日期
-    yesterday = (datetime.today() - timedelta(days=1)).strftime("%d-%b-%Y")
+    today = datetime.today().strftime("%d-%b-%Y")  # 修改为适合IMAP搜索的日期格式
 
     try:
         # 搜索昨天以来的所有邮件
-        status, messages = mail.search(None, 'SINCE', yesterday)
+        status, messages = mail.search(None, 'SINCE', today)
     except Exception as e:
         print(f"搜索邮件时出现问题: {e}")
         return
@@ -89,7 +89,6 @@ def check_email():
                     sys.exit()
 
     mail.logout()
-
 
 # 立即执行一次
 check_email()
