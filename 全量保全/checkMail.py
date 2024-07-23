@@ -1,12 +1,13 @@
-import imaplib
 import email
-from email.header import decode_header, make_header
+import imaplib
 import os
-import schedule
-import time
-from datetime import datetime, timedelta
-import sys
 import subprocess
+import sys
+import time
+from datetime import datetime
+from email.header import decode_header, make_header
+
+import schedule
 
 # 邮箱配置
 EMAIL = "ilushj@hotmail.com"
@@ -58,7 +59,7 @@ def check_email():
 
         # 检查发件人和主题
         from_address = email.utils.parseaddr(msg.get("From"))[1]
-        if from_address == "wangxy0127@foxmail.com" and "名单报备" in subject:
+        if from_address == "ilushj@hotmail.com" and "名单报备" in subject:
             print("找到匹配的邮件")
 
             # 检查邮件是否有附件
@@ -79,16 +80,17 @@ def check_email():
                     print(f"附件已保存: {file_path}")
 
                     # 执行 fullbackup.exe
-                    backup_exe = os.path.join(SAVE_DIRECTORY, "fullbackup.exe")
-                    if os.path.exists(backup_exe):
-                        subprocess.run([backup_exe])
-                        print("执行 fullbackup.exe 完成")
+                    # backup_exe = os.path.join(SAVE_DIRECTORY, "fullbackup.exe")
+                    # if os.path.exists(backup_exe):
+                    #    subprocess.run([backup_exe])
+                    #    print("执行 fullbackup.exe 完成")
 
                     # 保存成功后退出程序
                     mail.logout()
                     sys.exit()
 
     mail.logout()
+
 
 # 立即执行一次
 check_email()

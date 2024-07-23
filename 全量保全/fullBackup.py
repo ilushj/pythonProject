@@ -17,10 +17,10 @@ def login(plan):
 
     # 方案与账户信息映射
     accounts = {
-        '方案A': ('userA', 'passwordA'),
-        '方案B': ('userB', 'passwordB'),
-        '方案C': ('userC', 'passwordC'),
-        '方案D': ('userD', 'passwordD')
+        '花名册3010': ('shmj3010', '123456'),
+        '花名册6010': ('shmj6010', '123456'),
+        '花名册8010': ('shmj8010', '123456'),
+        '花名册10010': ('shmj10010', '123456')
     }
 
     if plan in accounts:
@@ -69,7 +69,6 @@ def callback_func(token, filepath, savepath):
     files = {
         'file': (filepath, open(filepath, 'rb'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')}
 
-    print(f"Payload: {payload}")
     response = requests.post(callback_url, headers=headers, data=payload, files=files)
     print(f"Response: {response.text}")
     response_data = response.json()
@@ -97,15 +96,15 @@ def callback_func(token, filepath, savepath):
 
         print(f"Removed {initial_length - final_length} erroneous records.")
         payload = {"employeeList": json.dumps(employee_list, ensure_ascii=False)}
-        print(f"Payload: {payload}")
+        # print(f"Payload: {payload}")
 
         response = requests.post(callback_url, headers=headers, data=payload, files=files)
         print(f"Response: {response.text}")
         response_data = response.json()
         if response_data.get('message') == '请求成功':
-            return '成功'
+            return '成功附带错误'
 
-    return '处理失败'
+    return '检测处理失败'
 
 
 # 上传所有数据函数
@@ -117,7 +116,7 @@ def upload_all(auth_value):
     response_data = response.json()
     if response_data.get('message') == '请求成功':
         return '成功'
-    return '处理失败'
+    return '投保处理失败'
 
 
 # 格式化每行数据为规定的JSON格式
@@ -139,7 +138,7 @@ def format_row_data(row):
 def send_error_email(filepath, subject, body):
     sender_email = "ilushj@hotmail.com"
     sender_name = "易久保系统"
-    receiver_email = "ilushj@hotmail.com"
+    receiver_email = "wangxy@pagzb.com"
     msg = EmailMessage()
     msg['From'] = formataddr((sender_name, sender_email))
     msg['To'] = receiver_email
@@ -166,13 +165,13 @@ def send_error_email(filepath, subject, body):
 
 
 # 主程序部分
+# 获取当天日期 格式为YYMMDD
+
 current_date = datetime.now().strftime("%y%m%d")
 file_path = r'd:\全量投保'
 source_filename = f'{current_date}.xlsx'
 source_filepath = os.path.join(file_path, source_filename)
 save_path = r'd:\全量投保\错误数据'
-error_filename = f'错误_{current_date}.xlsx'
-error_filepath = os.path.join(save_path, error_filename)
 
 # 读取Excel文件
 df = pd.read_excel(source_filepath)
@@ -196,18 +195,28 @@ for plan in plans:
     temp_filepath = os.path.join(file_path, temp_filename)
     df_plan.to_excel(temp_filepath, index=False)
 
+    error_filename = f'错误_{plan}_{current_date}.xlsx'
+    error_filepath = os.path.join(save_path, error_filename)
+
     result = callback_func(usertoken, temp_filepath, error_filepath)
     print(result)
     results.append((plan, result))
 
     if result == '成功':
         final_result = upload_all(usertoken)
-        send_error_email(error_filepath, "错误记录", "请查看附件中的错误记录。")
         print(final_result)
-        if final_result != "成功":
-            send_error_email(error_filepath, "全员投保失败", "全员投保失败，请手动操作！")
+    elif result == '成功附带错误':
+        final_result = upload_all(usertoken)
+        send_error_email(error_filepath, f'{current_date}_{plan}_错误记录', "请查看附件中的错误记录。")
+        print(final_result)
     else:
         send_error_email(error_filepath, "全员投保失败", "全员投保失败，请手动操作！")
+
+    if final_result == "投保处理失败":
+        send_error_email(error_filepath, "投保意外失败", "全员投保失败，请手动操作！")
+    else:
+        message = f'{current_date}_{plan}_投保成功'
+        send_error_email(error_filepath, message, "投保成功！")
 
 for plan, result in results:
     print(f"方案: {plan}, 结果: {result}")
