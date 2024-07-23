@@ -136,7 +136,7 @@ def format_row_data(row):
 
 # 邮件发送函数
 def send_error_email(filepath, subject, body):
-    sender_email = "ilushj@hotmail.com"
+    sender_email = "shihj@qidianbx.com"
     sender_name = "易久保系统"
     receiver_email = "wangxy@pagzb.com"
     msg = EmailMessage()
@@ -153,12 +153,10 @@ def send_error_email(filepath, subject, body):
                                subtype='vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename=file_name)
 
     try:
-        with smtplib.SMTP('smtp.office365.com', 587) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(sender_email, '771119+_')
-            server.send_message(msg)
+        # 使用 SMTP_SSL 进行 SSL 连接
+        with smtplib.SMTP_SSL('smtp.qiye.aliyun.com', 465) as server:
+            server.login(sender_email, 'Ilushj771119')  # 确保密码正确
+            server.send_message(msg)  
         print("邮件发送成功")
     except Exception as e:
         print(f"邮件发送失败: {e}")
