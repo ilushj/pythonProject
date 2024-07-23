@@ -10,9 +10,9 @@ from email.header import decode_header, make_header
 import schedule
 
 # 邮箱配置
-EMAIL = "ilushj@hotmail.com"
-PASSWORD = "771119+_"
-IMAP_SERVER = "imap-mail.outlook.com"
+EMAIL = "shihj@qidianbx.com"
+PASSWORD = "Ilushj771119"
+IMAP_SERVER = "imap.qiye.aliyun.com"
 IMAP_PORT = 993
 SAVE_DIRECTORY = r"d:\全量投保"
 
@@ -80,10 +80,10 @@ def check_email():
                     print(f"附件已保存: {file_path}")
 
                     # 执行 fullbackup.exe
-                    # backup_exe = os.path.join(SAVE_DIRECTORY, "fullbackup.exe")
-                    # if os.path.exists(backup_exe):
-                    #    subprocess.run([backup_exe])
-                    #    print("执行 fullbackup.exe 完成")
+                    backup_exe = os.path.join(SAVE_DIRECTORY, "fullbackup.exe")
+                    if os.path.exists(backup_exe):
+                        subprocess.run([backup_exe])
+                        print("执行 fullbackup.exe 完成")
 
                     # 保存成功后退出程序
                     mail.logout()
