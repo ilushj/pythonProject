@@ -10,9 +10,9 @@ from email.header import decode_header, make_header
 import schedule
 
 # 邮箱配置
-EMAIL = "shihj@qidianbx.com"
-PASSWORD = "Ilushj771119"
-IMAP_SERVER = "imap.qiye.aliyun.com"
+EMAIL = "wangxy@pagzb.com"
+PASSWORD = "Wxy1799170"
+IMAP_SERVER = "imap.exmail.qq.com"
 IMAP_PORT = 993
 SAVE_DIRECTORY = r"d:\全量投保"
 
@@ -56,10 +56,17 @@ def check_email():
 
         # 解码邮件主题
         subject = str(make_header(decode_header(msg["Subject"])))
-
-        # 检查发件人和主题
-        from_address = email.utils.parseaddr(msg.get("From"))[1]
-        if from_address == "ilushj@hotmail.com" and "名单报备" in subject:
+        try:
+            # 检查发件人和主题
+            from_address_raw = msg.get("From")  # 或者 msg.get("From")
+            if from_address_raw:
+                from_address = email.utils.parseaddr(from_address_raw)[1]
+                print(f"From address: {from_address}")
+            else:
+                print("发件人字段为空")
+        except Exception as e:
+            print(f"解析 '发件人' 地址时出错: {e}")
+        if from_address == "wangxy0127@foxmail.com" and "名单报备" in subject:
             print("找到匹配的邮件")
 
             # 检查邮件是否有附件

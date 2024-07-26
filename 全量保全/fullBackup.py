@@ -13,14 +13,14 @@ from datetime import datetime
 
 # 登录函数
 def login(plan):
-    url = 'https://test.ekangonline.com/kaimai/user/login'
+    url = 'https://ekangonline.com/kaimai/user/login'
 
     # 方案与账户信息映射
     accounts = {
-        '花名册3010': ('shmj3010', '123456'),
-        '花名册6010': ('shmj6010', '123456'),
-        '花名册8010': ('shmj8010', '123456'),
-        '花名册10010': ('shmj10010', '123456')
+        '花名册3010': ('shmj3010', '0551'),
+        '花名册6010': ('shmjqy6010', '114003'),
+        '花名册8010': ('shmj8010', '0551'),
+        '花名册10010': ('shmj10010', '0551')
     }
 
     if plan in accounts:
@@ -60,7 +60,7 @@ def login(plan):
 
 # 数据上传及处理函数
 def callback_func(token, filepath, savepath):
-    callback_url = 'https://test.ekangonline.com/kaimai/importrecord/uploadAllCheck'
+    callback_url = 'https://ekangonline.com/kaimai/importrecord/uploadAllCheck'
     df = pd.read_excel(filepath)
     headers = {'Authorization': token}
     employee_list = [format_row_data(row) for index, row in df.iterrows()]
@@ -109,7 +109,7 @@ def callback_func(token, filepath, savepath):
 
 # 上传所有数据函数
 def upload_all(auth_value):
-    url = 'https://test.ekangonline.com/kaimai/importrecord/uploadAll'
+    url = 'https://ekangonline.com/kaimai/importrecord/uploadAll'
     headers = {'Authorization': auth_value}
     response = requests.post(url, headers=headers)
     print(f"Upload All Response: {response.text}")
@@ -136,7 +136,7 @@ def format_row_data(row):
 
 # 邮件发送函数
 def send_error_email(filepath, subject, body):
-    sender_email = "shihj@qidianbx.com"
+    sender_email = "wangxy@pagzb.com"
     sender_name = "易久保系统"
     receiver_email = "wangxy@pagzb.com"
     msg = EmailMessage()
@@ -154,8 +154,8 @@ def send_error_email(filepath, subject, body):
 
     try:
         # 使用 SMTP_SSL 进行 SSL 连接
-        with smtplib.SMTP_SSL('smtp.qiye.aliyun.com', 465) as server:
-            server.login(sender_email, 'Ilushj771119')  # 确保密码正确
+        with smtplib.SMTP_SSL('smtp.exmail.qq.com', 465) as server:
+            server.login(sender_email, 'Wxy1799170')  # 确保密码正确
             server.send_message(msg)  
         print("邮件发送成功")
     except Exception as e:
