@@ -208,7 +208,7 @@ for plan in plans:
         send_error_email(error_filepath, f'{current_date}_{plan}_错误记录', "请查看附件中的错误记录。")
         print(final_result)
     else:
-        send_error_email(error_filepath, "全员投保失败", "全员投保失败，请手动操作！")
+        send_error_email(error_filepath, f'{current_date}_{plan}_全员投保失败', "全员投保失败，请手动操作！")
 
     if final_result == "投保处理失败":
         send_error_email(error_filepath, "投保意外失败", "全员投保失败，请手动操作！")

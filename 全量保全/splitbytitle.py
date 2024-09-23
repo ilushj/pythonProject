@@ -10,13 +10,13 @@ def extract_name(text):
         return match.group(1)
     return None
 
+
 def split_pdf_by_title(input_pdf, output_prefix, title="个人保险凭证"):
     with pdfplumber.open(input_pdf) as pdf:
         current_pdf_writer = PdfWriter()
         document_count = 1
         reader = PdfReader(input_pdf)
         name = None
-        section_started = False
 
         for page_num, page in enumerate(pdf.pages):
             text = page.extract_text()
@@ -47,7 +47,6 @@ def split_pdf_by_title(input_pdf, output_prefix, title="个人保险凭证"):
                     print(f"提取到的姓名：{name}")
             # 无论是否匹配关键词，当前页面都应添加到当前的 writer 中
             current_pdf_writer.add_page(reader.pages[page_num])
-
 
         # 保存最后一个文档
         if len(current_pdf_writer.pages) > 0:
