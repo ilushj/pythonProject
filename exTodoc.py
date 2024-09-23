@@ -32,9 +32,9 @@ def process_excel_to_pdf(excel_file_path):
     match = re.search(r'保额(.+?)(保费|$)', sheet['D6'].value)
 
     if match:
-        保额 = match.group(1).strip()
+        quota = match.group(1).strip()
     else:
-        保额 = None  # 或其他默认值，视情况而定
+        quota = None  # 或其他默认值，视情况而定
         # 加载 Word 模板
     doc = Document(r'D:/excel转换/temp.docx')
     print(f"提取的变量: 被保险人: {insured_person}, 保单号: {policy_number}, 险种类型: {insurance_type}")
@@ -97,7 +97,7 @@ def process_excel_to_pdf(excel_file_path):
             row['批增/批减'],
             row['生效日期'].strftime('%Y-%m-%d') if isinstance(row['生效日期'], datetime) else str(row['生效日期']),
             row['到期日期'].strftime('%Y-%m-%d') if isinstance(row['到期日期'], datetime) else str(row['到期日期']),
-            保额
+            quota
         ]
 
         # 遍历值，并为每个单元格中的文本设置字体
