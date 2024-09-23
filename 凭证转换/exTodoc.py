@@ -1,5 +1,7 @@
 import os
 import glob
+import sys
+
 import pandas as pd
 import re
 from docx import Document
@@ -9,16 +11,23 @@ from openpyxl.reader.excel import load_workbook
 import win32com.client as win32
 
 # 设置要遍历的目录路径
-directory_path = r'D:/excel转换/'
+directory_path = r'D:/凭证转换/input/'
 # 获取指定目录中的所有 Excel 文件
 excel_files = glob.glob(os.path.join(directory_path, '*.xlsx'))
+
+
+def resource_path(relative_path):
+    """获取打包后的文件路径"""
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 
 # 函数：处理每个 Excel 文件并生成 PDF
 def process_excel_to_pdf(excel_file_path):
     # 读取 Excel 文件
 
-    wb = load_workbook(excel_file_path)
+    wb = load_workbook(excel_file_path, data_only=True)  # data_only读取公式的计算结果
     sheet = wb.active  # 获取当前活动的表
 
     # 从 Excel 文件中提取变量
@@ -36,21 +45,26 @@ def process_excel_to_pdf(excel_file_path):
     else:
         quota = None  # 或其他默认值，视情况而定
         # 加载 Word 模板
-    doc = Document(r'D:/excel转换/temp.docx')
-    print(f"提取的变量: 被保险人: {insured_person}, 保单号: {policy_number}, 险种类型: {insurance_type}")
+    # 使用 resource_path 获取打包后的模板文件路径
+    template_path = resource_path('template.docx')
+    doc = Document(template_path)
 
+    # print(f"提取的变量: 被保险人: {insured_person}, 保单号: {policy_number}, 险种类型: {insurance_type}")
     # 添加从 Excel 提取的变量信息
-    def add_variable_paragraph(text):
+    def add_variable_paragraph(text, font_name='宋体', font_size=10):
         paragraph = doc.add_paragraph()
         run = paragraph.add_run(text)
-        run.font.name = '宋体'
-        run.font.size = Pt(10)  # 五号字
+        run.font.name = font_name
+        run.font.size = Pt(font_size)  # 五号字
+        run.bold = True  # 设置粗体
 
     # 添加变量信息
     add_variable_paragraph(f'被保险人：{insured_person}')
     add_variable_paragraph(f'保单号码：{policy_number}')
     add_variable_paragraph(f'险种类型：{insurance_type}')
-    add_variable_paragraph(f'起保日期：{start_date}  终保日期：{end_date}')
+    add_variable_paragraph(f'起保日期：{start_date}   终保日期：{end_date}')
+
+    doc.add_paragraph()  # 添加第二个空行
 
     # 添加表格头部（模仿 Word 示例的表格）
     table = doc.add_table(rows=1, cols=7)
@@ -59,13 +73,13 @@ def process_excel_to_pdf(excel_file_path):
     table.style = 'Table Grid'
 
     # 手动设置每一列的宽度
-    table.columns[0].width = Inches(0.4)  # 序号列
+    table.columns[0].width = Inches(0.3)  # 序号列
     table.columns[1].width = Inches(1.2)  # 姓名列
     table.columns[2].width = Inches(1.6)  # 身份证号码列
-    table.columns[3].width = Inches(1.4)  # 变更类型列
+    table.columns[3].width = Inches(1.6)  # 变更类型列
     table.columns[4].width = Inches(1.6)  # 生效日期列
     table.columns[5].width = Inches(1.6)  # 到期日期列
-    table.columns[6].width = Inches(0.4)  # 保额列
+    table.columns[6].width = Inches(0.3)  # 保额列
 
     # 读取 Excel 数据表
     df = pd.read_excel(excel_file_path, dtype={'证件号码': str}, skiprows=6)  # 根据实际情况调整 skiprows
@@ -107,13 +121,19 @@ def process_excel_to_pdf(excel_file_path):
     # 在添加内容之前插入两个空行
     doc.add_paragraph()  # 添加第一个空行
     doc.add_paragraph()  # 添加第二个空行
-    add_variable_paragraph(f'*兹经被保险人申请，本公司对上述批改内容予以确认。')
+
     add_variable_paragraph(
-        f'*该保险凭证的盖章件，仅限于员工入场时使用，不用于其他用途，不作为理赔依据，否则本公司有权追究相关的法律责任。')
+        f'*兹经被保险人申请，本公司对上述批改内容予以确认。',
+        font_name='宋体', font_size=7
+    )
+    add_variable_paragraph(
+        f'*该保险凭证的盖章件，仅限于员工入场时使用，不用于其他用途，不作为理赔依据，否则本公司有权追究相关的法律责任。',
+        font_name='宋体', font_size=7
+    )
 
     # 生成文件名，包含被保险人名称和起保日期
     file_name = f'{insured_person}'.replace(' ', '_')  # 去除空格，避免文件名不合法
-    word_output_path = os.path.join('D:/excel转换/', f'{file_name}.docx')
+    word_output_path = os.path.join('D:/凭证转换/output/', f'{file_name}.docx')
 
     doc.save(word_output_path)
 
@@ -126,6 +146,8 @@ def process_excel_to_pdf(excel_file_path):
     doc.SaveAs(pdf_output_path, FileFormat=17)  # 17 对应于 PDF 格式
     doc.Close()
     word.Quit()
+
+    os.remove(word_output_path)
 
     print(f'PDF 文件已保存到 {pdf_output_path}')
 

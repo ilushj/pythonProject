@@ -17,8 +17,12 @@ options.add_experimental_option('prefs', prefs)
 options.add_argument('--window-size=1920,1080')
 
 # 初始化 EdgeDriver
-service = Service(executable_path=driver_path)
-driver = webdriver.Edge(service=service, options=options)
+try:
+    service = Service(executable_path=driver_path)
+    driver = webdriver.Edge(service=service, options=options)
+except Exception as e:
+    print(f"An error occurred: {e}")
+
 try:
     # 打开指定的网页并登录
     url = 'https://qidian.ekangonline.com/spiam/index.html'  # 替换为实际的登录页面 URL
