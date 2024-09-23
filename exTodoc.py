@@ -29,16 +29,21 @@ def process_excel_to_pdf(excel_file_path):
     end_date = sheet['J4'].value  # 终保日期
 
     # 提取保额
-    保额 = re.search(r'保额(.+?)保费', sheet['D6'].value).group(1).strip()
+    match = re.search(r'保额(.+?)(保费|$)', sheet['D6'].value)
 
-    # 加载 Word 模板
+    if match:
+        保额 = match.group(1).strip()
+    else:
+        保额 = None  # 或其他默认值，视情况而定
+        # 加载 Word 模板
     doc = Document(r'D:/excel转换/temp.docx')
+    print(f"提取的变量: 被保险人: {insured_person}, 保单号: {policy_number}, 险种类型: {insurance_type}")
 
     # 添加从 Excel 提取的变量信息
     def add_variable_paragraph(text):
         paragraph = doc.add_paragraph()
         run = paragraph.add_run(text)
-        run.font.name = 'MS Gothic'
+        run.font.name = '宋体'
         run.font.size = Pt(10)  # 五号字
 
     # 添加变量信息
@@ -63,7 +68,7 @@ def process_excel_to_pdf(excel_file_path):
     table.columns[6].width = Inches(0.4)  # 保额列
 
     # 读取 Excel 数据表
-    df = pd.read_excel(excel_file_path, skiprows=6)  # 根据实际情况调整 skiprows
+    df = pd.read_excel(excel_file_path, dtype={'证件号码': str}, skiprows=6)  # 根据实际情况调整 skiprows
 
     # 清理列名空格，并确保列名一致
     df.columns = df.columns.str.strip()  # 去掉列名的空格
@@ -85,6 +90,7 @@ def process_excel_to_pdf(excel_file_path):
     for i, (index, row) in enumerate(df_filtered.iterrows(), start=1):
         cells = table.add_row().cells
         cells[0].text = str(i)  # 自增序号
+
         values = [
             row['姓名'],
             row['证件号码'],
@@ -96,10 +102,7 @@ def process_excel_to_pdf(excel_file_path):
 
         # 遍历值，并为每个单元格中的文本设置字体
         for j, value in enumerate(values):
-            paragraph = cells[j + 1].paragraphs[0]  # 获取当前单元格中的段落
-            run = paragraph.add_run(value)
-            run.font.name = 'MS Gothic'  # 设置字体为宋体
-            run.font.size = Pt(10)  # 五号字
+            cells[j + 1].text = str(value)
 
     # 在添加内容之前插入两个空行
     doc.add_paragraph()  # 添加第一个空行
@@ -109,7 +112,7 @@ def process_excel_to_pdf(excel_file_path):
         f'*该保险凭证的盖章件，仅限于员工入场时使用，不用于其他用途，不作为理赔依据，否则本公司有权追究相关的法律责任。')
 
     # 生成文件名，包含被保险人名称和起保日期
-    file_name = f'{insured_person}_{start_date}'.replace(' ', '_')  # 去除空格，避免文件名不合法
+    file_name = f'{insured_person}'.replace(' ', '_')  # 去除空格，避免文件名不合法
     word_output_path = os.path.join('D:/excel转换/', f'{file_name}.docx')
 
     doc.save(word_output_path)
