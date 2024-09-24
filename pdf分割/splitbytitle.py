@@ -58,6 +58,6 @@ def split_pdf_by_title(input_pdf, output_prefix, title="个人保险凭证"):
 
 
 # 调用示例
-input_pdf = 'd:/splitpdf/家属个人凭证测试pdf.pdf'
-output_prefix = 'd:/splitpdf/11/'
-split_pdf_by_title(input_pdf, output_prefix)
+pdf_file = 'd:/splitpdf/2.pdf'
+prefix = 'd:/splitpdf/11/'
+split_pdf_by_title(pdf_file, prefix)
