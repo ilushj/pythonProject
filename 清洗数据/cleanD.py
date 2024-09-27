@@ -5,7 +5,8 @@ import pandas as pd
 
 def update_and_delete_column():
     # 获取当前工作目录（即exe文件所在目录）
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # current_dir = os.path.dirname(os.path.abspath(__file__))
+    current_dir = os.getcwd()
 
     # 构造文件路径
     order_file_path = os.path.join(current_dir, '订单业绩平分人.xlsx')
@@ -39,7 +40,7 @@ def update_and_delete_column():
 
 def clean_sales_performance():
     # 获取当前工作目录（即exe文件所在目录）
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    current_dir = os.getcwd()
     # 构造文件路径
     file_path = os.path.join(current_dir, '数据清洗.xlsx')
 
@@ -114,7 +115,7 @@ def clean_sales_performance():
 
 def generate_xshk():
     # 获取当前工作目录（即exe文件所在目录）
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    current_dir = os.getcwd()
     # 构造文件路径
     file_path = os.path.join(current_dir, '数据清洗.xlsx')
     # 读取数据
@@ -160,7 +161,7 @@ def generate_xshk():
 
 def merge_sheets():
     # 获取当前工作目录（即exe文件所在目录）
-    current_dir = os.path.dirname(os.path.abspath(__file__))
+    current_dir = os.getcwd()
     # 构造文件路径
     file_path = os.path.join(current_dir, '数据清洗.xlsx')
 
