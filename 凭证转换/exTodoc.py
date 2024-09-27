@@ -106,7 +106,7 @@ def process_excel_to_pdf(excel_file_path):
         cells[0].text = str(i)  # 自增序号
 
         values = [
-            row['姓名'],
+            row['姓名'].replace(' ', ''),
             row['证件号码'],
             row['批增/批减'],
             row['生效日期'].strftime('%Y-%m-%d') if isinstance(row['生效日期'], datetime) else str(row['生效日期']),
