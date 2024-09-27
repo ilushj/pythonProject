@@ -1,13 +1,19 @@
 import os
-
 import openpyxl
 import pandas as pd
 
 
 def update_and_delete_column():
-    # 读取工作表数据
-    df_order = pd.read_excel('d:\\cleanD\\订单业绩平分人-查询.xlsx', sheet_name='订单业绩平分人-查询', header=2)
-    df_refund = pd.read_excel('D:\\cleanD\\欠款平分人业绩-查询 .xlsx', sheet_name='欠款平分人业绩-查询', header=2)
+    # 获取当前工作目录（即exe文件所在目录）
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # 构造文件路径
+    order_file_path = os.path.join(current_dir, '订单业绩平分人.xlsx')
+    refund_file_path = os.path.join(current_dir, '欠款平分人业绩.xlsx')
+
+    # 读取excel文件
+    df_order = pd.read_excel(order_file_path, sheet_name='订单业绩平分人-查询', header=2)
+    df_refund = pd.read_excel(refund_file_path, sheet_name='欠款平分人业绩-查询', header=2)
 
     # 更新“新-系统订单”工作表
     df_order.loc[df_order['归属类型-业绩归属'] == '团队', '归属人-业绩归属'] += '（团队）'
@@ -17,7 +23,8 @@ def update_and_delete_column():
     df_refund.loc[df_refund['销售业绩归属类型'] == '团队', '销售-业绩归属'] += '（团队）'
     df_refund.drop(columns='销售业绩归属类型', inplace=True)  # 删除H列
 
-    file_path = 'd:\\cleanD\\数据清洗.xlsx'
+    # 构造文件路径
+    file_path = os.path.join(current_dir, '数据清洗.xlsx')
 
     # 检查文件是否存在，如果不存在则创建一个空的 DataFrame 并保存为 Excel 文件
     if not os.path.exists(file_path):
@@ -31,12 +38,17 @@ def update_and_delete_column():
 
 
 def clean_sales_performance():
+    # 获取当前工作目录（即exe文件所在目录）
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # 构造文件路径
+    file_path = os.path.join(current_dir, '数据清洗.xlsx')
+
     # 读取源数据
-    df_orders = pd.read_excel('d:\\cleanD\\数据清洗.xlsx', sheet_name='新-系统订单')
-    df_recovery = pd.read_excel('d:\\cleanD\\数据清洗.xlsx', sheet_name='新-回收欠款')
+    df_orders = pd.read_excel(file_path, sheet_name='新-系统订单')
+    df_recovery = pd.read_excel(file_path, sheet_name='新-回收欠款')
 
     # 删除旧的工作表（如果存在）
-    with pd.ExcelWriter('d:\\cleanD\\数据清洗.xlsx', engine='openpyxl', mode='a') as writer:
+    with pd.ExcelWriter(file_path, engine='openpyxl', mode='a') as writer:
         if '销售业绩清洗' in writer.book.sheetnames:
             del writer.book['销售业绩清洗']
 
@@ -101,11 +113,15 @@ def clean_sales_performance():
 
 
 def generate_xshk():
+    # 获取当前工作目录（即exe文件所在目录）
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # 构造文件路径
+    file_path = os.path.join(current_dir, '数据清洗.xlsx')
     # 读取数据
-    df_source = pd.read_excel('d:\\cleanD\\数据清洗.xlsx', sheet_name='销售业绩清洗')
+    df_source = pd.read_excel(file_path, sheet_name='销售业绩清洗')
 
     # 删除旧的工作表（如果存在）
-    with pd.ExcelWriter('d:\\cleanD\\数据清洗.xlsx', engine='openpyxl', mode='a') as writer:
+    with pd.ExcelWriter(file_path, engine='openpyxl', mode='a') as writer:
         if '新XSHK404' in writer.book.sheetnames:
             del writer.book['新XSHK404']
 
@@ -143,8 +159,13 @@ def generate_xshk():
 
 
 def merge_sheets():
+    # 获取当前工作目录（即exe文件所在目录）
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # 构造文件路径
+    file_path = os.path.join(current_dir, '数据清洗.xlsx')
+
     # 打开工作簿
-    workbook = openpyxl.load_workbook('d:\\cleanD\\数据清洗.xlsx')
+    workbook = openpyxl.load_workbook(file_path)
 
     # 删除名为“咨询业绩清洗”的工作表（如果存在）
     if '咨询业绩清洗' in workbook.sheetnames:
@@ -175,7 +196,7 @@ def merge_sheets():
         ws_new.append(row)
 
     # 保存工作簿
-    workbook.save('d:\\cleanD\\数据清洗.xlsx')
+    workbook.save(file_path)
 
 
 if __name__ == "__main__":
