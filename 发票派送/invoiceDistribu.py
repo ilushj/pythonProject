@@ -20,7 +20,6 @@ def create_directory(workbook_path, file_path):
         to_email = row[0]
         keyword = row[1]
         keyword_list.append((to_email, keyword))
-
     return keyword_list
 
 
