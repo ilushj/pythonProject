@@ -46,17 +46,19 @@ server.login(from_email, password)
 # 遍历Excel文件中的每一行
 for row in sheet.iter_rows(min_row=2, values_only=True):
     to_email = row[0]
-    keyword = row[1]
+    # 获取关键词并拆分为列表
+    keywords = row[1].split(';')  # 根据分号分割并去除前后空格
+    keywords = [keyword.strip() for keyword in keywords]
 
     # 查找包含关键词的所有文件
     attachment_paths = []
     for root, dirs, files in os.walk(directory_path):
         for file in files:
-            if keyword in file:  # 检查文件名中是否包含关键词
+            if any(keyword in file for keyword in keywords):  # 检查文件名是否包含任一关键词
                 attachment_paths.append(os.path.join(root, file))
 
     if not attachment_paths:
-        print(f"没有找到包含关键词 '{keyword}' 的文件，跳过发送邮件。")
+        print(f"没有找到包含关键词 '{'; '.join(keywords)}' 的文件，跳过发送邮件。")
         continue
 
     # 构建邮件
@@ -64,7 +66,7 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
     msg['From'] = from_email
     msg['To'] = to_email
     msg['CC'] = cc_emails   # 抄送地址，可以是单个地址或以逗号分隔的多个地址
-    msg['Subject'] = f"{keyword} - {Subject} "
+    msg['Subject'] = f"{Subject} - {', '.join(keywords)}"
 
     # 添加文本消息
     text = text
