@@ -1,5 +1,6 @@
 import os
 import smtplib
+import time
 from email import encoders
 from email.header import Header
 from email.mime.base import MIMEBase
@@ -63,7 +64,7 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
     msg['From'] = from_email
     msg['To'] = to_email
     msg['CC'] = cc_emails   # 抄送地址，可以是单个地址或以逗号分隔的多个地址
-    msg['Subject'] = Subject
+    msg['Subject'] = f"{keyword} - {Subject} "
 
     # 添加文本消息
     text = text
@@ -92,6 +93,7 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
     for attachment_path in attachment_paths:
         os.remove(attachment_path)
         print(f"已成功删除文件 '{os.path.basename(attachment_path)}'.")
+
 
 # 关闭连接
 server.quit()
