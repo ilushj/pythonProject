@@ -1,7 +1,6 @@
 import os
 import glob
 import sys
-
 import pandas as pd
 import re
 from docx import Document
@@ -26,7 +25,6 @@ def resource_path(relative_path):
 # 函数：处理每个 Excel 文件并生成 PDF
 def process_excel_to_pdf(excel_file_path):
     # 读取 Excel 文件
-
     wb = load_workbook(excel_file_path, data_only=True)  # data_only读取公式的计算结果
     sheet = wb.active  # 获取当前活动的表
 
