@@ -1,12 +1,11 @@
 import os
 import sys
-
 import win32com.client as win32
 import pandas as pd
 from docx import Document
 
 # 加载Excel文件
-excel_file = r'D:/凭证转换/input/原始文件.xlsx'  # 替换为你的实际Excel文件路径
+excel_file = r'd:/凭证转换/input/原始文件.xlsx'  # 替换为你的实际Excel文件路径
 df = pd.read_excel(excel_file)
 
 
