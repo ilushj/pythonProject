@@ -12,7 +12,7 @@ def extract_refund_total(text):
         return refund_total.group(1)  # 提取第一个捕获组
 
     # 如果没有找到“退费合计：”，则检查其他两种情况
-    refund_total = re.search(r'(加收价税合计金额=|退还价税合计金额=)\s*(\S+)', text)
+    refund_total = re.search(r'(加收价税合计金额=|退还价税合计金额=|总保额变化:)\s*(\S+)', text)
     if refund_total:
         return refund_total.group(2)  # 提取第二个捕获组
 
@@ -21,15 +21,15 @@ def extract_refund_total(text):
 def extract_information(text):
     # 使用正则表达式提取指定字段的内容
     product_name = re.search(r'(产品名称|险种)：\s*(\S+)', text)
-    correction_number = re.search(r'(批改序号|批单号码)：\s*(\S+)', text)
-    policy_holder = re.search(r'投保人：\s*(\S+)', text)
+    correction_number = re.search(r'(批改序号|批单号码|批 单 号)：\s*(\S+)', text)
+    policy_holder = re.search(r'(投保人|被保险人)：\s*(\S+)', text)
     refund_total = extract_refund_total(text)
 
 
     return {
         "产品名称": product_name.group(2) if product_name else None,
         "批改序号": correction_number.group(2) if correction_number else None,
-        "投保人": policy_holder.group(1) if policy_holder else None,
+        "投保人": policy_holder.group(2) if policy_holder else None,
         "退费合计": refund_total if refund_total else None
     }
 
