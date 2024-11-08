@@ -21,11 +21,11 @@ def extract_info_from_pdf(pdf_path):
         # 清理文本，去除多余的换行和空格
         text = text.replace('\n', '').replace(' ', '')
 
-        # 使用正则表达式提取“购 名称”后的公司名称
-        name_match = re.search(r"购名称[:：]\s*([\u4e00-\u9fa5A-Za-z0-9]+)(?=销名称|$)", text)
+        # 提取“购 名称”
+        name_match = re.search(r"购名称[:：]\s*([\u4e00-\u9fa5A-Za-z0-9]+)", text)
         name = name_match.group(1).strip() if name_match else None
 
-        # 使用正则表达式提取“价税合计(大写)”后的金额
+        # 提取“价税合计(大写)”后的金额
         amount_match = re.search(r"价税合计\(大写\).*?（小写）¥([\d.]+)", text)
         amount = amount_match.group(1).strip() if amount_match else None
 
