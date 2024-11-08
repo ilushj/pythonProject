@@ -1,6 +1,7 @@
 import json
 import os
 import openpyxl
+import zipfile
 
 
 def read_config(config_path):
@@ -51,6 +52,31 @@ def create_directories(workbook_path, directory_list):
                 print(f"移动文件出错: {e}")
 
 
+def create_zip(directory_path):
+    # 指定要打包的主目录
+    root_dir = directory_path
+
+    # 遍历主目录下的所有子目录
+    for folder_name in os.listdir(root_dir):
+        folder_path = os.path.join(root_dir, folder_name)
+
+        # 确保是目录
+        if os.path.isdir(folder_path):
+            zip_file_name = f"{folder_name}.zip"
+            zip_file_path = os.path.join(root_dir, zip_file_name)
+
+            # 创建ZIP文件
+            with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                # 遍历目录中的所有文件
+                for root, _, files in os.walk(folder_path):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        # 将文件添加到ZIP文件
+                        zip_file.write(file_path, os.path.relpath(file_path, root_dir))
+
+    print("打包完成！")
+
+
 def main():
     config_path = os.path.join(os.getcwd(), 'config.ini')
     config = read_config(config_path)
@@ -58,12 +84,13 @@ def main():
         return
 
     file_path = config.get('file_path')
+    directory_path = config.get('directory_path')
     workbook_path = os.path.dirname(file_path)
 
     directory_list = create_directory(workbook_path, file_path)
     if directory_list is not None:
         create_directories(workbook_path, directory_list)
 
-
+    create_zip(directory_path)
 if __name__ == "__main__":
     main()

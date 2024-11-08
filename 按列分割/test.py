@@ -1,3 +1,5 @@
+import os
+
 import openpyxl
 from openpyxl.worksheet.datavalidation import DataValidation
 
@@ -37,5 +39,6 @@ for salesperson in unique_salespersons:
     dv.add(f'D2:D{row_idx-1}')  # 为该业务员的所有行添加验证
 
     # 保存为新的Excel文件
-    output_path = f'{salesperson}_data.xlsx'  # 文件名为业务员名字
+    output_path = os.path.join('D:/业务员群发/', f'{salesperson}_data.xlsx')  # 文件名为业务员名字
+    # word_output_path = os.path.join('D:/凭证转换/output/', f'{file_name}.docx')
     new_wb.save(output_path)
