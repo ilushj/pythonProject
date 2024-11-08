@@ -122,14 +122,13 @@ def upload_all(auth_value):
 # 格式化每行数据为规定的JSON格式
 def format_row_data(row):
     formatted_data = {
-        'colCount': 7,
+        'colCount': 6,
         'col1': row['姓名'],
         'col2': row['身份证'],
-        'col3': row['职业类别'],
+        'col3': row['用工单位'],
         'col4': row['工种'],
-        'col5': row['用工单位'],
-        'col6': row['雇主单位'],
-        'col7': "验证通过"
+        'col5': row['职业类别'],
+        'col6': row['雇主单位']
     }
     return formatted_data
 
