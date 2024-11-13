@@ -36,9 +36,9 @@ for park, group in grouped:
     doc = Document(template_path)
 
     # 在Word文档的第三行插入劳动合同主体字符串（假设是第3行第2列）
-    cell = doc.tables[0].cell(2, 1)
-    run = cell.paragraphs[0].add_run(contract_subjects_str)
-    run.bold = True  # 设置劳动合同主体为粗体
+    # cell = doc.tables[0].cell(2, 1)
+    # run = cell.paragraphs[0].add_run(contract_subjects_str)
+    # run.bold = True  # 设置劳动合同主体为粗体
 
     # 在文档最后添加员工表格
     doc.add_paragraph("员工信息").runs[0].bold = True  # 添加粗体标题
@@ -49,7 +49,7 @@ for park, group in grouped:
     hdr_cells[1].paragraphs[0].add_run('姓名').bold = True
     hdr_cells[2].paragraphs[0].add_run('证件').bold = True
     hdr_cells[3].paragraphs[0].add_run('身份证号码').bold = True
-    hdr_cells[4].paragraphs[0].add_run('职业类别').bold = True
+    hdr_cells[4].paragraphs[0].add_run('园区名称').bold = True
 
     # 填充表格数据
     for index, row in employee_data.iterrows():
@@ -58,7 +58,8 @@ for park, group in grouped:
         row_cells[1].text = row['员工姓名']
         row_cells[2].text = row['证件']
         row_cells[3].text = row['证件号码']
-        row_cells[4].text = row['职业类别']
+        # row_cells[4].text = row['职业类别']
+        row_cells[4].text = f'{park}'
     # 保存文档，名称为"园区+在保证明.docx"
     default_park = "-在保凭证"
     file_name = f'{park}' + default_park
