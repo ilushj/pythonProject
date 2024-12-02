@@ -21,7 +21,8 @@ grouped = df.groupby('园区')
 
 for park, group in grouped:
     # 1. 提取唯一的“劳动合同主体”
-    contract_subjects = group['劳动合同主体'].unique()
+    # contract_subjects = group['劳动合同主体'].unique()
+    contract_subjects = ""
     default_subject = "上海千服企业管理有限公司；"
     contract_subjects_str = default_subject + '；'.join(map(str, contract_subjects))  # 将所有元素转换为字符串再拼接
 

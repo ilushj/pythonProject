@@ -1,67 +1,96 @@
+import json
 import os
-import re
-import pdfplumber
+import openpyxl
+import zipfile
 
 
-def extract_info_from_pdf(pdf_path):
-    """
-    使用 pdfplumber 从 PDF 中提取“购 名称”和“价税合计(大写)”中的信息。
-    """
+def read_config(config_path):
     try:
-        with pdfplumber.open(pdf_path) as pdf:
-            text = ""
-            for page in pdf.pages:
-                page_text = page.extract_text()
-                if page_text:
-                    text += page_text
-
-        # 打印调试信息，查看提取的文本
-        print(f"Extracted text from {os.path.basename(pdf_path)}:\n{text}\n{'-' * 50}")
-
-        # 清理文本，去除多余的换行和空格
-        text = text.replace('\n', '').replace(' ', '')
-
-        # 使用正则表达式提取“购 名称”后的公司名称
-        name_match = re.search(r"购名称[:：]\s*([\u4e00-\u9fa5A-Za-z0-9]+)(?=销名称|$)", text)
-        name = name_match.group(1).strip() if name_match else None
-
-        # 使用正则表达式提取“价税合计(大写)”后的金额
-        amount_match = re.search(r"价税合计\(大写\).*?（小写）¥([\d.]+)", text)
-        amount = amount_match.group(1).strip() if amount_match else None
-
-        return name, amount
+        with open(config_path, 'r', encoding='utf-8') as config_file:
+            return json.load(config_file)
     except Exception as e:
-        print(f"Error reading {pdf_path}: {e}")
-    return None, None
+        print(f"读取配置文件出错: {e}")
+        return None
 
 
-def rename_pdf_files_in_directory(directory):
-    """
-    遍历目录中的所有 PDF 文件，提取“购 名称”和“价税合计(大写)”的金额，并修改文件名。
-    """
-    for filename in os.listdir(directory):
-        if filename.lower().endswith('.pdf'):
-            file_path = os.path.join(directory, filename)
-
-            # 提取购方名称和金额
-            buyer_name, amount = extract_info_from_pdf(file_path)
-
-            if buyer_name and amount:
-                # 构造新的文件名（确保名称合法）
-                sanitized_name = re.sub(r'[\\/*?:"<>|]', "", buyer_name)
-                new_filename = f"{sanitized_name}_{amount}.pdf"
-                new_file_path = os.path.join(directory, new_filename)
-
-                # 重命名文件
-                try:
-                    os.rename(file_path, new_file_path)
-                    print(f"Renamed: {filename} -> {new_filename}")
-                except Exception as e:
-                    print(f"Error renaming {filename}: {e}")
-            else:
-                print(f"Could not extract name or amount from {filename}")
+def create_directory(workbook_path, file_path):
+    workbook = openpyxl.load_workbook(file_path)
+    sheet = workbook.active
+    keyword_list = []
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        to_email = row[0]
+        keyword = row[1]
+        keyword_list.append((to_email, keyword))
+    return keyword_list
 
 
-# 运行函数
-directory_path = r"D:\发票"
-rename_pdf_files_in_directory(directory_path)
+def create_directories(workbook_path, directory_list):
+    for directory in directory_list:
+        to_email, keyword = directory
+        directory_path = os.path.join(workbook_path, to_email)
+        if not os.path.exists(directory_path):
+            try:
+                os.makedirs(directory_path)
+                print(f"已成功创建目录 '{to_email}'。")
+            except Exception as e:
+                print(f"创建目录出错: {e}")
+        else:
+            print(f"目录 '{to_email}' 已存在。")
+
+        files = []
+        for root, dirs, filenames in os.walk(workbook_path):
+            for filename in filenames:
+                if keyword in filename:
+                    files.append(os.path.join(root, filename))
+
+        for file in files:
+            new_file_path = os.path.join(directory_path, os.path.basename(file))
+            try:
+                os.rename(file, new_file_path)
+                print(f"已成功移动文件 '{os.path.basename(file)}' 到目录 '{to_email}'。")
+            except Exception as e:
+                print(f"移动文件出错: {e}")
+
+
+def create_zip(directory_path):
+    # 指定要打包的主目录
+    root_dir = directory_path
+
+    # 遍历主目录下的所有子目录
+    for folder_name in os.listdir(root_dir):
+        folder_path = os.path.join(root_dir, folder_name)
+
+        # 确保是目录
+        if os.path.isdir(folder_path):
+            zip_file_name = f"{folder_name}.zip"
+            zip_file_path = os.path.join(root_dir, zip_file_name)
+
+            # 创建ZIP文件
+            with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                # 遍历目录中的所有文件
+                for root, _, files in os.walk(folder_path):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        # 将文件添加到ZIP文件
+                        zip_file.write(file_path, os.path.relpath(file_path, root_dir))
+
+    print("打包完成！")
+
+
+def main():
+    config_path = os.path.join(os.getcwd(), 'config.ini')
+    config = read_config(config_path)
+    if config is None:
+        return
+
+    file_path = config.get('file_path')
+    directory_path = config.get('directory_path')
+    workbook_path = os.path.dirname(file_path)
+
+    directory_list = create_directory(workbook_path, file_path)
+    if directory_list is not None:
+        create_directories(workbook_path, directory_list)
+
+    create_zip(directory_path)
+if __name__ == "__main__":
+    main()
