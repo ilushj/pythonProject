@@ -3,11 +3,14 @@ import pandas as pd
 # 1. 文件路径
 rule_path = '易久保规则.xlsx'
 year_path = '全年.xlsx'
+current_month_path = '当月.xlsx'
 output_path = '当月赔付数据.xlsx'  # 结果文件路径
 
 # 2. 读取规则和全年表
 rules = pd.read_excel(rule_path)
 year_data = pd.read_excel(year_path)
+current_month_data = pd.read_excel(current_month_path)
+
 
 # 3. 百分比转换函数
 def percentage_to_float(series):
@@ -19,6 +22,7 @@ def percentage_to_float(series):
     if series.str.contains('%').any():  # 检查是否包含 "%"
         return series.str.rstrip('%').astype(float) / 100
     return series.astype(float)
+
 
 # 转换规则表中相关列（确保只处理百分比字段）
 rules.iloc[:, :6] = rules.iloc[:, :6].apply(percentage_to_float)
@@ -33,6 +37,7 @@ year_data['客户赔付率'] = year_data.apply(
     lambda row: row['归属赔付率'] if pd.notna(row['归属赔付率']) else row['客户赔付率'], axis=1
 )
 
+
 # 5. 比对函数
 def match_rule(person_rate, client_rate):
     """
@@ -44,6 +49,7 @@ def match_rule(person_rate, client_rate):
             return rules.iloc[i, 4], rules.iloc[i, 5]
     return None, None
 
+
 # 6. 应用规则
 result = year_data.apply(
     lambda row: match_rule(row['个人赔付率'], row['客户赔付率']),
@@ -53,10 +59,22 @@ result = year_data.apply(
 # 7. 分配结果
 year_data['业绩比例'], year_data['提奖比例'] = zip(*result)
 
-# 8. 保存结果
-output_data = year_data[[
-    '业务员', '客户名称', '客户赔付率', '归属赔付率', '个人赔付率', '业绩比例', '提奖比例'
-]]
-output_data.to_excel(output_path, index=False)  # 自动覆盖原文件
+# 8. 数据匹配
+# 当前月数据（业务员 + 客户名称）与全年数据匹配
+merged_data = pd.merge(
+    current_month_data,  # 当月.xlsx 的数据
+    year_data[['业务员', '客户名称', '客户赔付率', '个人赔付率', '业绩比例', '提奖比例']],  # 匹配用字段
+    on=['业务员', '客户名称'],  # 匹配条件
+    how='left'  # 左连接，保留当月.xlsx 的所有数据
+)
+
+# 9. 保留字段
+result_data = merged_data[
+    ['业务员', '客户名称', '在保月份', '投保方案', '总保费', '佣金折扣', '项目类型',
+     '客户赔付率', '个人赔付率', '业绩比例', '提奖比例']
+]
+
+# 10. 保存结果
+result_data.to_excel(output_path, index=False)  # 自动覆盖原文件
 
 print(f"文件已保存并覆盖至 {output_path}")
