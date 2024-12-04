@@ -101,6 +101,7 @@ result_data = merged_data[
      '客户赔付率', '个人赔付率', '业绩比例', '提奖比例', '业绩', '提奖']
 ]
 
+
 # 匹配出与胡林特殊.xlsx相同的行
 matched_data = result_data.merge(hulin_data, on=['业务员', '客户名称'], how='inner')
 
