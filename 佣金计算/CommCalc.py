@@ -1,10 +1,20 @@
 import pandas as pd
 
+# 获取用户输入的月份
+month = input("请输入月份（如：1、2、3...）：")
+
 # 1. 文件路径
 rule_path = '易久保规则.xlsx'
-year_path = '全年.xlsx'
-current_month_path = '当月.xlsx'
-output_path = '当月赔付数据.xlsx'  # 结果文件路径
+year_path = f"{month}全年.xlsx"
+current_month_path = f"{month}当月.xlsx"
+output_path = f"{month}月佣金数据.xlsx"  # 结果文件路径
+hulin_file = f"{month}胡林特殊.xlsx"
+
+# 假设胡林特殊.xlsx 在同目录下，读取文件
+hulin_data = pd.read_excel(hulin_file)
+
+# 提取胡林特殊.xlsx中的“业务员”和“客户名称”列
+hulin_data = hulin_data[['业务员', '客户名称']].drop_duplicates()
 
 # 2. 读取规则和全年表
 rules = pd.read_excel(rule_path)
@@ -59,6 +69,10 @@ result = year_data.apply(
 # 7. 分配结果
 year_data['业绩比例'], year_data['提奖比例'] = zip(*result)
 
+# 删除可能重复的列
+current_month_data = current_month_data.drop(columns=['客户赔付率', '个人赔付率'], errors='ignore')
+
+
 # 8. 数据匹配
 # 当前月数据（业务员 + 客户名称）与全年数据匹配
 merged_data = pd.merge(
@@ -68,13 +82,39 @@ merged_data = pd.merge(
     how='left'  # 左连接，保留当月.xlsx 的所有数据
 )
 
+# 计算业绩和提奖
+merged_data['业绩'] = (
+    merged_data['总保费'] *
+    merged_data['佣金折扣'] *
+    merged_data['业绩比例']
+).round(2)  # 保留两位小数
+
+merged_data['提奖'] = (
+    merged_data['总保费'] *
+    merged_data['佣金折扣'] *
+    merged_data['提奖比例']
+).round(2)  # 保留两位小数
+
 # 9. 保留字段
 result_data = merged_data[
     ['业务员', '客户名称', '在保月份', '投保方案', '总保费', '佣金折扣', '项目类型',
-     '客户赔付率', '个人赔付率', '业绩比例', '提奖比例']
+     '客户赔付率', '个人赔付率', '业绩比例', '提奖比例', '业绩', '提奖']
 ]
 
+# 匹配出与胡林特殊.xlsx相同的行
+matched_data = result_data.merge(hulin_data, on=['业务员', '客户名称'], how='inner')
+
+# 从result_data中移除这些匹配的行
+filtered_data = result_data.merge(hulin_data, on=['业务员', '客户名称'], how='left', indicator=True)
+filtered_data = filtered_data[filtered_data['_merge'] == 'left_only'].drop(columns=['_merge'])
+
+# 保存匹配的数据到胡林当月.xlsx
+matched_data.to_excel(f"{month}胡林当月.xlsx", index=False)
+
+# 按照业务员名称降序排序
+filtered_data = filtered_data.sort_values(by='业务员', ascending=False)
+
 # 10. 保存结果
-result_data.to_excel(output_path, index=False)  # 自动覆盖原文件
+filtered_data.to_excel(output_path, index=False)  # 自动覆盖原文件
 
 print(f"文件已保存并覆盖至 {output_path}")
