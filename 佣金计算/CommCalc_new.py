@@ -81,14 +81,18 @@ year_data['归属赔付率'] = percentage_to_float(year_data['归属赔付率'])
 year_data['个人赔付率'] = percentage_to_float(year_data['个人赔付率'])
 
 # 合并summary_df与year_data，基于“业务员”进行合并
-merged_df1 = pd.merge(year_data[['业务员', '个人赔付率']], summary_df, on='业务员', how='left')
-# 查看合并后的数据
-print(merged_df1)
-# 将最终赔款与个人赔付率相加，并更新个人赔付率
-merged_df1['个人赔付率'] = merged_df1['个人赔付率'] + merged_df['赔款占比']
-merged_df1['个人赔付率'] = merged_df1['个人赔付率']
-# 将更新后的个人赔付率保存回 year_data
-year_data['个人赔付率'] = merged_df1['个人赔付率']
+year_data = pd.merge(year_data, summary_df, on='业务员', how='left')
+
+# 新增 '个人赔付率和' 列，计算 '个人赔付率' 和 '其他数据' 的和
+year_data['个人赔付率和'] = year_data['个人赔付率'] + year_data['赔款占比']
+
+
+year_data['个人赔付率'] = year_data.apply(
+    lambda row: row['个人赔付率和'] if pd.notna(row['个人赔付率和']) else row['个人赔付率'], axis=1
+)
+
+# 删除 '个人赔付率和' 列，因为它已被替换
+year_data = year_data.drop(columns=['个人赔付率和'])
 
 # 保存结果到新的 Excel 文件
 year_data.to_excel('Updated_year_data.xlsx', index=False)
