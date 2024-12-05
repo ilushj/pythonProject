@@ -9,6 +9,10 @@ year_path = f"{month}全年.xlsx"
 current_month_path = f"{month}当月.xlsx"
 output_path = f"{month}月佣金数据.xlsx"  # 结果文件路径
 hulin_file = f"{month}胡林特殊.xlsx"
+tpd_path = f"{month}TPD.xlsx"
+
+# 读取TPD_RULE.xlsx文件
+rules_df = pd.read_excel('TPD_RULE.XLSX')
 
 # 假设胡林特殊.xlsx 在同目录下，读取文件
 hulin_data = pd.read_excel(hulin_file)
@@ -20,6 +24,7 @@ hulin_data = hulin_data[['业务员', '客户名称']].drop_duplicates()
 rules = pd.read_excel(rule_path)
 year_data = pd.read_excel(year_path)
 year_data = year_data.sort_values(by='业务员', ascending=False)
+tpd_df = pd.read_excel(tpd_path)
 current_month_data = pd.read_excel(current_month_path)
 
 
@@ -34,6 +39,36 @@ def percentage_to_float(series):
         return series.str.rstrip('%').astype(float) / 100
     return series.astype(float)
 
+# 函数用于比对TPD比例和规则
+def get_tpd_ratio(tpd_value):
+    for _, rule in rules_df.iterrows():
+        lower_bound = rule.iloc[0]  # 使用 iloc 按位置访问
+        upper_bound = rule.iloc[1]  # 使用 iloc 按位置访问
+        tpd_ratio = rule.iloc[2]  # 使用 iloc 按位置访问
+        if lower_bound <= tpd_value < upper_bound:
+            return tpd_ratio
+    return None  # 如果没有匹配的规则，返回None
+
+# 计算“实际理赔”除以“预估理赔”并转成百分比
+tpd_df['TPD比例'] = (tpd_df['实际赔款'] / tpd_df['预估赔款']) * 100
+# 应用函数，计算每行的TPD比例
+tpd_df['TPD比例'] = tpd_df['TPD比例'].apply(get_tpd_ratio)
+# 计算 TPD比例 与 综合赔款 的乘积
+tpd_df['最终赔款'] = tpd_df['TPD比例'] * tpd_df['综合赔款'] / 100  # 除以100因为TPD比例是百分比
+
+# 合并tpd_df与year_data，基于“业务员”和“客户名称”进行合并
+merged_df = pd.merge(tpd_df, year_data[['业务员', '客户名称', '总保费']], on=['业务员', '客户名称'], how='left')
+
+# 计算最终赔款与总保费的比值
+merged_df['赔款占比'] = (merged_df['最终赔款'] / merged_df['总保费'])*100
+# 按“业务员”字段汇总“赔款占比”
+summary_df = merged_df.groupby('业务员')['赔款占比'].sum().reset_index()
+
+# 保存汇总结果到新文件
+summary_df.to_excel('Business_Summary.xlsx', index=False)
+
+# 保存详细结果到新文件
+merged_df.to_excel('TPD_with_final_payment_and_ratio.xlsx', index=False)
 
 # 转换规则表中相关列（确保只处理百分比字段）
 rules.iloc[:, :6] = rules.iloc[:, :6].apply(percentage_to_float)
@@ -42,6 +77,19 @@ rules.iloc[:, :6] = rules.iloc[:, :6].apply(percentage_to_float)
 year_data['客户赔付率'] = percentage_to_float(year_data['客户赔付率'])
 year_data['归属赔付率'] = percentage_to_float(year_data['归属赔付率'])
 year_data['个人赔付率'] = percentage_to_float(year_data['个人赔付率'])
+
+# 合并summary_df与year_data，基于“业务员”进行合并
+merged_df1 = pd.merge(year_data[['业务员', '个人赔付率']],summary_df,  on='业务员', how='left')
+# 查看合并后的数据
+print(merged_df1)
+# 将最终赔款与个人赔付率相加，并更新个人赔付率
+merged_df1['个人赔付率'] = merged_df1['个人赔付率'] + merged_df['赔款占比']
+merged_df1['个人赔付率'] = merged_df1['个人赔付率']
+# 将更新后的个人赔付率保存回 year_data
+year_data['个人赔付率'] = merged_df1['个人赔付率']
+
+# 保存结果到新的 Excel 文件
+year_data.to_excel('Updated_year_data.xlsx', index=False)
 
 # 4. 客户赔付率计算
 year_data['客户赔付率'] = year_data.apply(
