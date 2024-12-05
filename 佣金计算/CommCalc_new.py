@@ -39,6 +39,7 @@ def percentage_to_float(series):
         return series.str.rstrip('%').astype(float) / 100
     return series.astype(float)
 
+
 # 函数用于比对TPD比例和规则
 def get_tpd_ratio(tpd_value):
     for _, rule in rules_df.iterrows():
@@ -48,6 +49,7 @@ def get_tpd_ratio(tpd_value):
         if lower_bound <= tpd_value < upper_bound:
             return tpd_ratio
     return None  # 如果没有匹配的规则，返回None
+
 
 # 计算“实际理赔”除以“预估理赔”并转成百分比
 tpd_df['TPD比例'] = (tpd_df['实际赔款'] / tpd_df['预估赔款']) * 100
@@ -60,7 +62,7 @@ tpd_df['最终赔款'] = tpd_df['TPD比例'] * tpd_df['综合赔款'] / 100  # �
 merged_df = pd.merge(tpd_df, year_data[['业务员', '客户名称', '总保费']], on=['业务员', '客户名称'], how='left')
 
 # 计算最终赔款与总保费的比值
-merged_df['赔款占比'] = (merged_df['最终赔款'] / merged_df['总保费'])*100
+merged_df['赔款占比'] = (merged_df['最终赔款'] / merged_df['总保费']) * 100
 # 按“业务员”字段汇总“赔款占比”
 summary_df = merged_df.groupby('业务员')['赔款占比'].sum().reset_index()
 
@@ -79,7 +81,7 @@ year_data['归属赔付率'] = percentage_to_float(year_data['归属赔付率'])
 year_data['个人赔付率'] = percentage_to_float(year_data['个人赔付率'])
 
 # 合并summary_df与year_data，基于“业务员”进行合并
-merged_df1 = pd.merge(year_data[['业务员', '个人赔付率']],summary_df,  on='业务员', how='left')
+merged_df1 = pd.merge(year_data[['业务员', '个人赔付率']], summary_df, on='业务员', how='left')
 # 查看合并后的数据
 print(merged_df1)
 # 将最终赔款与个人赔付率相加，并更新个人赔付率
@@ -121,7 +123,6 @@ year_data['业绩比例'], year_data['提奖比例'] = zip(*result)
 # 删除可能重复的列
 current_month_data = current_month_data.drop(columns=['客户赔付率', '个人赔付率'], errors='ignore')
 
-
 # 8. 数据匹配
 # 当前月数据（业务员 + 客户名称）与全年数据匹配
 merged_data = pd.merge(
@@ -138,20 +139,21 @@ grouped = year_data.groupby('业务员')['总保费'].sum()
 for business_person, total_premium in grouped.items():
     # 如果总保费小于200000且业绩比例和提奖比例为0.3，修改业绩比例和提奖比例为0.2
     if total_premium < 200000:
-        condition = (merged_data['业务员'] == business_person) & (merged_data['业绩比例'] == 0.3) & (merged_data['提奖比例'] == 0.3)
+        condition = (merged_data['业务员'] == business_person) & (merged_data['业绩比例'] == 0.3) & (
+                    merged_data['提奖比例'] == 0.3)
         merged_data.loc[condition, ['业绩比例', '提奖比例']] = 0.2
 
 # 计算业绩和提奖
 merged_data['业绩'] = (
-    merged_data['总保费'] *
-    merged_data['佣金折扣'] *
-    merged_data['业绩比例']
+        merged_data['总保费'] *
+        merged_data['佣金折扣'] *
+        merged_data['业绩比例']
 ).round(2)  # 保留两位小数
 
 merged_data['提奖'] = (
-    merged_data['总保费'] *
-    merged_data['佣金折扣'] *
-    merged_data['提奖比例']
+        merged_data['总保费'] *
+        merged_data['佣金折扣'] *
+        merged_data['提奖比例']
 ).round(2)  # 保留两位小数
 
 # 9. 保留字段
@@ -159,7 +161,6 @@ result_data = merged_data[
     ['业务员', '客户名称', '在保月份', '投保方案', '总保费', '佣金折扣', '项目类型',
      '客户赔付率', '个人赔付率', '业绩比例', '提奖比例', '业绩', '提奖']
 ]
-
 
 # 匹配出与胡林特殊.xlsx相同的行
 matched_data = result_data.merge(hulin_data, on=['业务员', '客户名称'], how='inner')
