@@ -6,7 +6,7 @@ months = [month.strip() for month in month.split(",")]
 
 # 遍历每个月份，执行对应的操作
 for month in months:
-    print(f"正在处理 {month} 月的数据...")
+    print(f"正在处理 {month} 月的数据……")
     # 1. 文件路径
     rule_path = '易久保规则.xlsx'
     year_path = f"{month}全年.xlsx"
