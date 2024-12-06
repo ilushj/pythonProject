@@ -21,8 +21,8 @@ grouped = df.groupby('园区')
 
 for park, group in grouped:
     # 1. 提取唯一的“劳动合同主体”
-    # contract_subjects = group['劳动合同主体'].unique()
-    contract_subjects = ""
+    contract_subjects = group['劳动合同主体'].unique()
+    # contract_subjects = ""
     default_subject = "上海千服企业管理有限公司；"
     contract_subjects_str = default_subject + '；'.join(map(str, contract_subjects))  # 将所有元素转换为字符串再拼接
 
@@ -33,13 +33,13 @@ for park, group in grouped:
     employee_data['职业类别'] = '四类'  # 添加“职业类别”列，值全为“员工”
 
     # 3. 创建Word文档
-    template_path = resource_path('templatepark.docx')
+    template_path = resource_path('templatepark-1.docx')
     doc = Document(template_path)
 
     # 在Word文档的第三行插入劳动合同主体字符串（假设是第3行第2列）
-    # cell = doc.tables[0].cell(2, 1)
-    # run = cell.paragraphs[0].add_run(contract_subjects_str)
-    # run.bold = True  # 设置劳动合同主体为粗体
+    cell = doc.tables[0].cell(2, 1)
+    run = cell.paragraphs[0].add_run(contract_subjects_str)
+    run.bold = True  # 设置劳动合同主体为粗体
 
     # 在文档最后添加员工表格
     doc.add_paragraph("员工信息").runs[0].bold = True  # 添加粗体标题
