@@ -8,19 +8,17 @@ rule_path = '易久保规则.xlsx'
 year_path = f"{month}全年.xlsx"
 current_month_path = f"{month}当月.xlsx"
 output_path = f"{month}月佣金数据.xlsx"  # 结果文件路径
-hulin_file = f"{month}胡林特殊.xlsx"
+hulin_file = f"{month}胡林特殊.xlsx"  # 结果文件路径
 
-# 假设胡林特殊.xlsx 在同目录下，读取文件
-hulin_data = pd.read_excel(hulin_file)
-
-# 提取胡林特殊.xlsx中的“业务员”和“客户名称”列
-hulin_data = hulin_data[['业务员', '客户名称']].drop_duplicates()
 
 # 2. 读取规则和全年表
 rules = pd.read_excel(rule_path)
 year_data = pd.read_excel(year_path)
 current_month_data = pd.read_excel(current_month_path)
+hulin_data = pd.read_excel(hulin_file)
 
+# 提取胡林特殊.xlsx中的“业务员”和“客户名称”列
+hulin_data = hulin_data[['业务员', '客户名称']].drop_duplicates()
 
 # 3. 百分比转换函数
 def percentage_to_float(series):
