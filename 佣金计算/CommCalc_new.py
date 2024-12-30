@@ -45,7 +45,7 @@ for month in months:
 
 
     # 函数用于比对TPD比例和规则
-    def get_tpd_ratio(tpd_value1):
+    def get_tpd_ratio(tpd_value):
         for _, rule in rules_df.iterrows():
             lower_bound = rule.iloc[0]  # 使用 iloc 按位置访问
             upper_bound = rule.iloc[1]  # 使用 iloc 按位置访问
