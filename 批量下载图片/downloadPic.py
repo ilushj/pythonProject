@@ -13,7 +13,7 @@ if not os.path.exists(download_dir):
     os.makedirs(download_dir)
 
 # 读取Excel文件
-wb = openpyxl.load_workbook(excel_file_path)
+wb = openpyxl.load_workbook(excel_file_path,data_only=True)
 
 # 获取用户输入的sheet名称
 sheet_name = input("请输入sheet名称：")
@@ -84,3 +84,4 @@ for row in range(3, sheet.max_row + 1):
                 print(f"下载失败：{link}")
         except requests.exceptions.RequestException as e:
             print(f"下载错误：{e}")
+input("Press Enter to exit...")
