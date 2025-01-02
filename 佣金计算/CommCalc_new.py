@@ -3,20 +3,25 @@ import pandas as pd
 # 获取用户输入的月份
 month = input("请输入月份（如：1、2、3...）：")
 months = [month.strip() for month in month.split(",")]
+# 获取文件路径
+rule_path = input("请输入易久保规则文件路径：")
+current_month_path_prefix = input("请输入当月计算文件路径前缀（如：C:\CAL\）：")
+output_path_prefix = input("请输入结果文件路径前缀（如：C:\CAL\）：")
 
 # 遍历每个月份，执行对应的操作
 for month in months:
     print(f"正在处理 {month} 月的数据……")
     # 1. 文件路径
-    rule_path = '易久保规则.xlsx'
-    year_path = f"{month}全年.xlsx"
-    current_month_path = f"{month}当月.xlsx"
-    output_path = f"{month}月佣金数据.xlsx"  # 结果文件路径
-    hulin_file = f"{month}胡林特殊.xlsx"
-    tpd_path = f"{month}TPD.xlsx"
+    rule_path = f"{rule_path}易久保规则.xlsx"
+    rule_tpd_path = f"{rule_path}TPD_RULE.xlsx"
+    year_path = f"{current_month_path_prefix}{month}全年.xlsx"
+    current_month_path = f"{current_month_path_prefix}{month}当月.xlsx"
+    hulin_file = f"{current_month_path_prefix}{month}胡林特殊.xlsx"
+    tpd_path = f"{current_month_path_prefix}{month}TPD.xlsx"  # 大病理赔
+    output_path = f"{output_path_prefix}{month}月佣金数据.xlsx"  # 结果文件路径
 
     # 读取TPD_RULE.xlsx文件
-    rules_df = pd.read_excel('TPD_RULE.XLSX')
+    rules_df = pd.read_excel(rule_tpd_path)
 
     # 假设胡林特殊.xlsx 在同目录下，读取文件
     hulin_data = pd.read_excel(hulin_file)
@@ -90,7 +95,6 @@ for month in months:
     # 新增 '个人赔付率和' 列，计算 '个人赔付率' 和 '其他数据' 的和
     year_data['个人赔付率和'] = year_data['个人赔付率'] + year_data['赔款占比']
 
-
     year_data['个人赔付率'] = year_data.apply(
         lambda row: row['个人赔付率和'] if pd.notna(row['个人赔付率和']) else row['个人赔付率'], axis=1
     )
@@ -148,7 +152,7 @@ for month in months:
         # 如果总保费小于200000且业绩比例和提奖比例为0.3，修改业绩比例和提奖比例为0.2
         if total_premium < 200000:
             condition = (merged_data['业务员'] == business_person) & (merged_data['业绩比例'] == 0.3) & (
-                        merged_data['提奖比例'] == 0.3)
+                    merged_data['提奖比例'] == 0.3)
             merged_data.loc[condition, ['业绩比例', '提奖比例']] = 0.2
 
     # 计算业绩和提奖
@@ -178,7 +182,7 @@ for month in months:
     filtered_data = filtered_data[filtered_data['_merge'] == 'left_only'].drop(columns=['_merge'])
 
     # 保存匹配的数据到胡林当月.xlsx
-    matched_data.to_excel(f"{month}月胡林佣金.xlsx", index=False)
+    matched_data.to_excel(f"{output_path_prefix}{month}月胡林佣金.xlsx", index=False)
 
     # 按照业务员名称降序排序
     filtered_data = filtered_data.sort_values(by='业务员', ascending=False)
