@@ -44,63 +44,79 @@ os.makedirs(base_download_dir, exist_ok=True)
 # 加载Excel文件
 wb = openpyxl.load_workbook(excel_file_path, data_only=True)
 print("可用的工作表：", wb.sheetnames)
-sheet_name = input("请输入sheet名称：")
-sheet = wb[sheet_name]
+
+# 获取用户输入的sheet名称
+sheet_name = input("请输入sheet名称（按回车遍历所有工作表）：").strip()
 
 # 获取用户输入的姓名
 target_name = input("请输入要查找的姓名（按回车处理所有）：").strip()
 
-# 获取标题行的列索引（从第二行开始）
-headers = {sheet.cell(row=2, column=col).value: col for col in range(1, sheet.max_column + 1)}
+# 处理单个工作表或遍历所有工作表
+if sheet_name:
+    sheet_names = [sheet_name]
+else:
+    sheet_names = wb.sheetnames  # 遍历所有工作表
 
-# 检查标题列的名称
-print("标题列：", headers)
+# 遍历每个工作表
+for sheet_name in sheet_names:
+    print(f"开始处理工作表：{sheet_name}")
+    sheet = wb[sheet_name]
 
-# 遍历Excel行
-for row in range(3, sheet.max_row + 1):
-    # 获取姓名（处理合并单元格）
-    name = get_cell_value(sheet, row, headers.get('姓名', 1)) or "Unknown"
+    try:
+        # 获取标题行的列索引（从第二行开始）
+        headers = {sheet.cell(row=2, column=col).value: col for col in range(1, sheet.max_column + 1)}
 
-    # 如果姓名匹配或用户未输入目标姓名
-    if target_name and name != target_name:
-        continue  # 跳过不匹配的行
+        # 检查标题列的名称
+        print(f"{sheet_name} 工作表的标题列：", headers)
 
-    # 处理其他列信息
-    department = get_cell_value(sheet, row, headers.get('部门', 2)) or "Unknown"
-    date = get_cell_value(sheet, row, headers.get('日期', 3)) or "Unknown"
-    time = get_cell_value(sheet, row, headers.get('时间', 4)) or "Unknown"
+        # 遍历Excel行
+        for row in range(3, sheet.max_row + 1):
+            # 获取姓名（处理合并单元格）
+            name = get_cell_value(sheet, row, headers.get('姓名', 1)) or "Unknown"
 
-    # 获取超链接
-    h_link = sheet.cell(row=row, column=headers.get('图1', 8)).hyperlink
-    i_link = sheet.cell(row=row, column=headers.get('图2', 9)).hyperlink
+            # 如果姓名匹配或用户未输入目标姓名
+            if target_name and name != target_name:
+                continue  # 跳过不匹配的行
 
-    # 获取有效链接
-    links = [link.target for link in (h_link, i_link) if link and is_valid_url(link.target)]
+            # 处理其他列信息
+            department = get_cell_value(sheet, row, headers.get('部门', 2)) or "Unknown"
+            date = get_cell_value(sheet, row, headers.get('日期', 3)) or "Unknown"
+            time = get_cell_value(sheet, row, headers.get('时间', 4)) or "Unknown"
 
-    # 动态设置下载目录
-    download_dir = os.path.join(base_download_dir, name) if target_name else base_download_dir
-    os.makedirs(download_dir, exist_ok=True)
+            # 获取超链接
+            h_link = sheet.cell(row=row, column=headers.get('图1', 8)).hyperlink
+            i_link = sheet.cell(row=row, column=headers.get('图2', 9)).hyperlink
 
-    # 下载图片
-    for link in links:
-        try:
-            response = requests.get(link, stream=True)
-            if response.status_code == 200:
-                # 生成文件名
-                if isinstance(time, datetime):
-                    time = time.strftime('%H-%M-%S')
-                image_name = sanitize_filename(f"{name}_{department}_{date}_{time}.jpg")
-                image_name = get_unique_filename(download_dir, image_name)
+            # 获取有效链接
+            links = [link.target for link in (h_link, i_link) if link and is_valid_url(link.target)]
 
-                # 保存图片
-                with open(os.path.join(download_dir, image_name), 'wb') as f:
-                    for chunk in response.iter_content(1024):
-                        f.write(chunk)
-                print(f"下载成功：{link} -> {image_name}")
-            else:
-                print(f"下载失败：{link}，状态码：{response.status_code}")
-        except requests.exceptions.RequestException as e:
-            print(f"下载错误：{e}")
+            # 动态设置下载目录
+            download_dir = os.path.join(base_download_dir, name) if target_name else base_download_dir
+            os.makedirs(download_dir, exist_ok=True)
+
+            # 下载图片
+            for link in links:
+                try:
+                    response = requests.get(link, stream=True)
+                    if response.status_code == 200:
+                        # 生成文件名
+                        if isinstance(time, datetime):
+                            time = time.strftime('%H-%M-%S')
+                        image_name = sanitize_filename(f"{name}_{department}_{date}_{time}.jpg")
+                        image_name = get_unique_filename(download_dir, image_name)
+
+                        # 保存图片
+                        with open(os.path.join(download_dir, image_name), 'wb') as f:
+                            for chunk in response.iter_content(1024):
+                                f.write(chunk)
+                        print(f"下载成功：{link} -> {image_name}")
+                    else:
+                        print(f"下载失败：{link}，状态码：{response.status_code}")
+                except requests.exceptions.RequestException as e:
+                    print(f"下载错误：{e}")
+
+    except Exception as e:
+        print(f"处理工作表 {sheet_name} 时发生错误：{str(e)}")
 
 # 提示完成
 input("任务完成！按回车退出...")
