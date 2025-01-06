@@ -9,11 +9,11 @@ wb = openpyxl.load_workbook(file_path)
 ws = wb.active
 
 # 获取每个业务员的唯一值
-salesperson_col = [cell.value for cell in ws['A'][1:]]  # 假设“业务员”在A列，从第2行开始
+salesperson_col = [cell.value for cell in ws['B'][1:]]  # 假设“业务员”在A列，从第2行开始
 unique_salespersons = set(salesperson_col)
 
 # 定义数据验证规则（普通派遣客户,未指定），确保显示下拉箭头
-dv = DataValidation(type="list", formula1='"普通派遣客户,收单客户,代企业投保,其他"', showDropDown=False)
+# dv = DataValidation(type="list", formula1='"普通派遣客户,收单客户,代企业投保,其他"', showDropDown=False)
 
 # 遍历每个业务员，并将他们的数据保存到新的Excel文件中
 for salesperson in unique_salespersons:
@@ -35,10 +35,10 @@ for salesperson in unique_salespersons:
             row_idx += 1
 
     # 为第四列添加数据验证（即“客户性质”列，假设在D列）
-    new_ws.add_data_validation(dv)
-    dv.add(f'D2:D{row_idx-1}')  # 为该业务员的所有行添加验证
+ #   new_ws.add_data_validation(dv)
+  #  dv.add(f'D2:D{row_idx-1}')  # 为该业务员的所有行添加验证
 
     # 保存为新的Excel文件
-    output_path = os.path.join('D:/业务员群发/', f'{salesperson}_data.xlsx')  # 文件名为业务员名字
+    output_path = os.path.join('D:/test111/', f'{salesperson}_data.xlsx')  # 文件名为业务员名字
     # word_output_path = os.path.join('D:/凭证转换/output/', f'{file_name}.docx')
     new_wb.save(output_path)
