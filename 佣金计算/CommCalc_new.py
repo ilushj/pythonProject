@@ -4,7 +4,7 @@ import pandas as pd
 month = input("请输入月份（如：1、2、3...）：")
 months = [month.strip() for month in month.split(",")]
 # 获取文件路径
-rule_path1 = input("请输入易久保规则文件路径（默认佣金下的佣金规则目录）：")
+rule_pathPath = input("请输入易久保规则文件路径（默认佣金下的佣金规则目录）：")
 current_month_path_prefix = input("请输入当月计算文件路径前缀（默认：2025佣金）：")
 output_path_prefix = input("请输入结果文件路径前缀（默认:2025佣金）：")
 
@@ -12,8 +12,8 @@ output_path_prefix = input("请输入结果文件路径前缀（默认:2025佣�
 for month in months:
     print(f"正在处理 {month} 月的数据……")
     # 1. 文件路径
-    rule_path = f"{rule_path1}易久保规则.xlsx"
-    rule_tpd_path = f"{rule_path1}TPD_RULE.xlsx"
+    rule_path = f"{rule_pathPath}易久保规则.xlsx"
+    rule_tpd_path = f"{rule_pathPath}TPD_RULE.xlsx"
     year_path = f"{current_month_path_prefix}{month}全年.xlsx"
     current_month_path = f"{current_month_path_prefix}{month}当月.xlsx"
     hulin_file = f"{current_month_path_prefix}{month}胡林特殊.xlsx"
