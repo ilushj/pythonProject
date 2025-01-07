@@ -4,7 +4,7 @@ import pandas as pd
 month = input("请输入月份（如：1、2、3...）：")
 months = [month.strip() for month in month.split(",")]
 # 获取文件路径
-rule_path = input("请输入易久保规则文件路径：")
+rule_path1 = input("请输入易久保规则文件路径：")
 current_month_path_prefix = input("请输入当月计算文件路径前缀（如：C:\CAL\）：")
 output_path_prefix = input("请输入结果文件路径前缀（如：C:\CAL\）：")
 
@@ -12,8 +12,8 @@ output_path_prefix = input("请输入结果文件路径前缀（如：C:\CAL\）
 for month in months:
     print(f"正在处理 {month} 月的数据……")
     # 1. 文件路径
-    rule_path = f"{rule_path}易久保规则.xlsx"
-    rule_tpd_path = f"{rule_path}TPD_RULE.xlsx"
+    rule_path = f"{rule_path1}易久保规则.xlsx"
+    rule_tpd_path = f"{rule_path1}TPD_RULE.xlsx"
     year_path = f"{current_month_path_prefix}{month}全年.xlsx"
     current_month_path = f"{current_month_path_prefix}{month}当月.xlsx"
     hulin_file = f"{current_month_path_prefix}{month}胡林特殊.xlsx"
@@ -76,10 +76,10 @@ for month in months:
     summary_df = merged_df.groupby('业务员')['赔款占比'].sum().reset_index()
 
     # 保存汇总结果到新文件
-    summary_df.to_excel('Business_Summary.xlsx', index=False)
+    summary_df.to_excel(f"{output_path_prefix}{month}Business_Summary.xlsx", index=False)
 
     # 保存详细结果到新文件
-    merged_df.to_excel('TPD_with_final_payment_and_ratio.xlsx', index=False)
+    merged_df.to_excel(f"{output_path_prefix}{month}TPD_with_final_payment_and_ratio.xlsx", index=False)
 
     # 转换规则表中相关列（确保只处理百分比字段）
     rules.iloc[:, :6] = rules.iloc[:, :6].apply(percentage_to_float)
@@ -103,7 +103,7 @@ for month in months:
     year_data = year_data.drop(columns=['个人赔付率和'])
 
     # 保存结果到新的 Excel 文件
-    year_data.to_excel('Updated_year_data.xlsx', index=False)
+    year_data.to_excel(f"{output_path_prefix}{month}Updated_year_data.xlsx", index=False)
 
     # 4. 客户赔付率计算
     year_data['客户赔付率'] = year_data.apply(
