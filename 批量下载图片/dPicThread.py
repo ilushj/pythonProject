@@ -104,7 +104,7 @@ else:
     sheet_names = wb.sheetnames  # 遍历所有工作表
 
 # 创建一个线程池，设置最大工作线程数为10
-with ThreadPoolExecutor(max_workers=10) as executor:
+with ThreadPoolExecutor(max_workers=5) as executor:
     futures = []  # 用于存储线程任务的返回值（future）
 
     # 遍历每个工作表
