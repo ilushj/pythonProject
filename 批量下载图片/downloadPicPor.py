@@ -80,8 +80,7 @@ for sheet_name in sheet_names:
 
             # 处理其他列信息
             department = get_cell_value(sheet, row, headers.get('部门', 2)) or "Unknown"
-            date = get_cell_value(sheet,
-                                  row, headers.get('日期', 3)) or "Unknown"
+            date = get_cell_value(sheet, row, headers.get('日期', 3)) or "Unknown"
             time = get_cell_value(sheet, row, headers.get('时间', 4)) or "Unknown"
 
             # 获取超链接
