@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 # 获取用户输入的月份
 month = input("请输入月份（如：1、2、3...）：")
@@ -61,14 +62,18 @@ for month in months:
 
 
     # 计算“实际理赔”除以“预估理赔”并转成百分比
-    tpd_df['TPD比例'] = (tpd_df['实际赔款'] / tpd_df['预估赔款']) * 100
+    tpd_df['TPD比例'] = np.where((tpd_df['实际赔款'] == 0) | tpd_df['实际赔款'].isnull() | (tpd_df['预估赔款'] == 0), 0.15, (1 - tpd_df['实际赔款'] / tpd_df['预估赔款']))
+
     # 应用函数，计算每行的TPD比例
     tpd_df['TPD比例'] = tpd_df['TPD比例'].apply(get_tpd_ratio)
     # 计算 TPD比例 与 综合赔款 的乘积
     tpd_df['最终赔款'] = tpd_df['TPD比例'] * tpd_df['综合赔款'] / 100  # 除以100因为TPD比例是百分比
 
-    # 合并tpd_df与year_data，基于“业务员”和“客户名称”进行合并
-    merged_df = pd.merge(tpd_df, year_data[['业务员', '客户名称', '总保费']], on=['业务员', '客户名称'], how='left')
+    # 在year_data中把业务员名字相同的总保费相加
+    year_data_grouped = year_data.groupby('业务员')['总保费'].sum().reset_index()
+
+    # 合并tpd_df与year_data_grouped，基于“业务员”进行合并
+    merged_df = pd.merge(tpd_df, year_data_grouped, on='业务员', how='left')
 
     # 计算最终赔款与总保费的比值
     merged_df['赔款占比'] = (merged_df['最终赔款'] / merged_df['总保费']) * 100
