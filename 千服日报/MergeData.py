@@ -93,11 +93,11 @@ if not df_batch_add.empty and not df_batch_subtract.empty:
 
     # 标记在 df_batch_subtract 中与 merged_df 中相同的行
     merged_flag_subtract = pd.merge(df_batch_subtract, merged_df[['新雇员证件号码']], on='新雇员证件号码', how='left',
-                           indicator=True)
+                                    indicator=True)
 
     # 标记在 df_batch_subtract 中与 merged_df 中相同的行
     merged_flag_add = pd.merge(df_batch_add, merged_df[['新雇员证件号码']], on='新雇员证件号码', how='left',
-                           indicator=True)
+                               indicator=True)
 
     # 从 df_batch_subtract 中删除与 merged_df 中相同的行
     df_batch_subtract = merged_flag_subtract[merged_flag_subtract['_merge'] != 'both'].drop(columns='_merge')
