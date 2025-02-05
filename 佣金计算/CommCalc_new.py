@@ -1,5 +1,9 @@
 import pandas as pd
 import numpy as np
+import warnings
+
+warnings.filterwarnings('ignore', category=UserWarning, message='Workbook contains no default style, apply openpyxl\'s default')
+
 
 # 获取用户输入的月份
 month = input("请输入月份（如：1、2、3...）：")
