@@ -35,6 +35,8 @@ def process_excel_to_pdf(excel_file_path):
     start_date = sheet['D4'].value  # 起保日期
     end_date = sheet['J4'].value  # 终保日期
 
+
+
     # 提取保额
     match = re.search(r'保额(.+?)(保费|$)', sheet['D6'].value)
 
@@ -57,7 +59,10 @@ def process_excel_to_pdf(excel_file_path):
         run.bold = True  # 设置粗体
 
     # 添加变量信息
-    add_variable_paragraph(f'被保险人：{insured_person}')
+    if insurance_type == '雇主责任险':
+        add_variable_paragraph(f'被保险人：{insured_person}')
+    elif insurance_type == '团体意外险':
+        add_variable_paragraph(f'投保人  ：{insured_person}')
     add_variable_paragraph(f'保单号码：{policy_number}')
     add_variable_paragraph(f'险种类型：{insurance_type}')
     add_variable_paragraph(f'起保日期：{start_date}   终保日期：{end_date}')
