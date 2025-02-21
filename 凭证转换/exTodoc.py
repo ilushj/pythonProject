@@ -1,13 +1,14 @@
-import os
 import glob
-import sys
-import pandas as pd
+import os
 import re
-from docx import Document
+import sys
 from datetime import datetime
+import pandas as pd
+from docx import Document
 from docx.shared import Pt, Inches
+from docx2pdf import convert
 from openpyxl.reader.excel import load_workbook
-import win32com.client as win32
+
 
 # 设置要遍历的目录路径
 directory_path = r'D:/凭证转换/input/'
@@ -47,7 +48,7 @@ def process_excel_to_pdf(excel_file_path):
         # 加载 Word 模板
     # 使用 resource_path 获取打包后的模板文件路径
     template_path = resource_path('template.docx')
-    doc = Document(template_path)
+    doc = Document(str(template_path))
 
     # print(f"提取的变量: 被保险人: {insured_person}, 保单号: {policy_number}, 险种类型: {insurance_type}")
     # 添加从 Excel 提取的变量信息
@@ -137,22 +138,22 @@ def process_excel_to_pdf(excel_file_path):
     # 生成文件名，包含被保险人名称和起保日期
     file_name = f'{insured_person}'.replace(' ', '_')  # 去除空格，避免文件名不合法
     word_output_path = os.path.join('D:/凭证转换/output/', f'{file_name}.docx')
-
+    # 定义 PDF 路径
+    pdf_output_path = word_output_path.replace('.docx', '.pdf')  # <-- 关键定义
     doc.save(word_output_path)
 
-    # 将 Word 文件转换为 PDF
-    pdf_output_path = word_output_path.replace('.docx', '.pdf')
+    # 生成文件名，包含被保险人名称和起保日期
 
-    # 使用 Word 应用程序将 DOCX 转换为 PDF
-    word = win32.Dispatch('Word.Application')
-    doc = word.Documents.Open(word_output_path)
-    doc.SaveAs(pdf_output_path, FileFormat=17)  # 17 对应于 PDF 格式
-    doc.Close()
-    word.Quit()
 
+    # 替换为 docx2pdf 转换
+    try:
+        convert(word_output_path, pdf_output_path)
+        print(f'PDF 文件已保存到 {pdf_output_path}')
+    except Exception as e:
+        print(f'转换PDF时发生错误: {str(e)}')
+
+    # 删除临时文件（可选）
     os.remove(word_output_path)
-
-    print(f'PDF 文件已保存到 {pdf_output_path}')
 
 
 for excel_file in excel_files:
