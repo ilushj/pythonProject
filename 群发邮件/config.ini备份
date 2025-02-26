@@ -1,10 +1,10 @@
 [Settings]
 file_path = C:\Users\ilush\PycharmProjects\pythonProject\群发邮件\公司通讯录.xlsx
-directory_path = C:\Users\ilush\PycharmProjects\pythonProject\群发邮件
+directory_path = D:\群发email
 smtp_host = smtp.qiye.aliyun.com
 smtp_port = 465
 cc_email = support02@qidianbx.com
 from_email = support02@qidianbx.com
 password = Kj20000071639
-subject = 邮件主题：众安发票
-text = 附件为您名下客户的众安发票，注意查收。谢谢！
+subject = 邮件主题：易久保众安12月发票
+text = 附件为您名下易久保客户的众安12月发票，注意查收。谢谢！
