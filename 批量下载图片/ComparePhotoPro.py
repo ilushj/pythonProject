@@ -1,168 +1,189 @@
 import cv2
 import numpy as np
-import os
-import xlsxwriter
-import logging
-import shutil
+from PIL import Image
+import matplotlib.pyplot as plt
+import matplotlib
+import pytesseract
 
-# 设置日志记录
-logging.basicConfig(filename='image_quality.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# 强制使用无 GUI 后端
+matplotlib.use('Agg')
 
-# 黑边检测
-def detect_dark_edges(img, threshold=50, edge_width_ratio=0.05):
+
+# 加载图片
+def load_image(image_path):
+    img = cv2.imread(image_path)
+    if img is None:
+        raise FileNotFoundError(f"Image not found: {image_path}")
+    return img
+
+
+# 预处理：转换为灰度图并平滑
+def preprocess_image(img):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    return gray, blurred
+
+
+# 边缘检测
+def edge_detection(blurred):
+    edges = cv2.Canny(blurred, 50, 150)
+    return edges
+
+
+# 定位包含冒号的文字区域
+def locate_colon_text(img):
     """
-    检测图片是否有深色边缘（类似黑边但不完全纯黑）。
+    使用OCR定位包含冒号的文字区域，返回边界框和文字内容。
 
-    参数:
-        img: 输入的图像 (BGR 格式)
-        threshold: 边缘区域亮度阈值，小于该值判断为深色边缘
-        edge_width_ratio: 边缘检测的宽度比例 (相对于图像宽度或高度)
+    参数：
+        img (ndarray): 输入图像
 
-    返回:
-        是否有深色边缘 (True/False)
-    """
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    _, _, v = cv2.split(hsv)  # 提取亮度 (V 通道)
-    height, width = v.shape
-
-    edge_width = int(min(height, width) * edge_width_ratio)
-
-    # 提取上下左右边缘
-    top_edge = v[:edge_width, :]
-    bottom_edge = v[-edge_width:, :]
-    left_edge = v[:, :edge_width]
-    right_edge = v[:, -edge_width:]
-
-    # 计算边缘区域的平均亮度
-    top_mean = np.mean(top_edge)
-    bottom_mean = np.mean(bottom_edge)
-    left_mean = np.mean(left_edge)
-    right_mean = np.mean(right_edge)
-
-    # 判断是否存在深色边缘
-    if (
-        top_mean < threshold or
-        bottom_mean < threshold or
-        left_mean < threshold or
-        right_mean < threshold
-    ):
-        return True
-    return False
-
-# 对比度检测
-def calculate_contrast(img):
-    """
-    计算图像对比度，使用亮度（灰度）直方图计算对比度值。
-
-    参数:
-        img: 输入的图像 (BGR 格式)
-
-    返回:
-        对比度值 (float)
-    """
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 转换为灰度图
-    return np.std(gray)  # 计算灰度值的标准差作为对比度
-
-# 纹理失真检测
-def calculate_texture_distortion(img):
-    """
-    计算纹理失真，通过 Sobel 算子检测纹理变化。
-
-    参数:
-        img: 输入的图像 (BGR 格式)
-
-    返回:
-        纹理失真值 (float)
+    返回：
+        boxes (list): [(x, y, w, h, text, colon_idx), ...]
     """
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    sobel_x = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
-    sobel_y = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
-    texture = np.sqrt(sobel_x ** 2 + sobel_y ** 2)
-    return np.mean(texture)
+    data = pytesseract.image_to_data(gray, lang='chi_sim', output_type=pytesseract.Output.DICT)
+    boxes = []
+    for i in range(len(data['text'])):
+        text = data['text'][i].strip()
+        if ':' in text or '：' in text:  # 支持英文和中文冒号
+            x, y, w, h = data['left'][i], data['top'][i], data['width'][i], data['height'][i]
+            colon_idx = text.index(':' if ':' in text else '：')
+            boxes.append((x, y, w, h, text, colon_idx))
+    return boxes
 
-# 主处理逻辑
-def process_images(dir_path):
+
+# 噪声分析（按冒号分割区域）
+def noise_analysis_colon_split(gray, box, colon_idx, char_width_approx):
     """
-    处理输入目录中的图片，检测质量问题并生成报告。
+    按冒号分割区域，分别分析前后的噪声水平。
 
-    参数:
-        dir_path: 图片目录路径
+    参数：
+        gray (ndarray): 灰度图像
+        box (tuple): (x, y, w, h) 文字区域边界框
+        colon_idx (int): 冒号在文字中的索引
+        char_width_approx (int): 每个字符的近似宽度
+
+    返回：
+        before_noise (float): 冒号前噪声水平
+        after_noise (float): 冒号后噪声水平
     """
-    # 创建 Excel 文件
-    workbook = xlsxwriter.Workbook('image_quality.xlsx')
-    worksheet = workbook.add_worksheet()
+    x, y, w, h = box
+    colon_x = x + colon_idx * char_width_approx  # 估算冒号的x坐标
+    colon_end_x = colon_x + char_width_approx
 
-    # 设置标题行
-    worksheet.write(0, 0, '文件名')
-    worksheet.write(0, 1, '黑边检测')
-    worksheet.write(0, 2, '偏色度')
-    worksheet.write(0, 3, '清晰度')
-    worksheet.write(0, 4, '纹理失真')
-    worksheet.write(0, 5, '对比度')
-
-    # 初始化行号
-    row = 1
-
-    # 创建“疑似”目录
-    suspicious_dir = os.path.join(dir_path, "疑似")
-    if not os.path.exists(suspicious_dir):
-        os.makedirs(suspicious_dir)
-
-    # 遍历目录中的 JPG 文件
-    for filename in os.listdir(dir_path):
-        if filename.endswith('.jpg'):
-            img_path = os.path.join(dir_path, filename)
-            logging.info(f"正在处理文件：{img_path}")
-
-            try:
-                # 读取图片
-                img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), cv2.IMREAD_COLOR)
-
-                # 检查图像是否为空
-                if img is None:
-                    logging.error(f"无法读取图像文件：{img_path}")
-                    continue
-
-                # 黑边检测
-                black_edge = detect_dark_edges(img, threshold=50, edge_width_ratio=0.05)
-
-                # 偏色检测
-                hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-                h, s, _ = cv2.split(hsv)
-                color_deviation = int(np.std(h) + np.std(s))
-
-                # 清晰度检测
-                clarity = int(cv2.Laplacian(img, cv2.CV_64F).var())
-
-                # 纹理失真检测
-                texture_distortion = calculate_texture_distortion(img)
-
-                # 对比度检测
-                contrast = calculate_contrast(img)
-
-                # 写入 Excel 文件
-                worksheet.write(row, 0, filename)
-                worksheet.write(row, 1, '是' if black_edge else '否')
-                worksheet.write(row, 2, color_deviation)
-                worksheet.write(row, 3, clarity)
-                worksheet.write(row, 4, texture_distortion)
-                worksheet.write(row, 5, contrast)
-
-                # 复制文件到“疑似”目录
-                if black_edge or (clarity < 100 and texture_distortion < 20) :
-                    shutil.copy(img_path, suspicious_dir)
-
-                row += 1
-            except Exception as e:
-                logging.error(f"处理文件 {filename} 时发生错误：{e}")
-
-    # 关闭 Excel 文件
-    workbook.close()
-
-if __name__ == "__main__":
-    dir_path = input("请输入图片目录路径：")
-    if os.path.exists(dir_path):
-        process_images(dir_path)
-        print("处理完成，结果已保存到 image_quality.xlsx")
+    # 前部分区域
+    before_region = gray[y:y + h, x:colon_x]
+    if before_region.size == 0:
+        before_noise = 0
     else:
-        print("输入的目录路径不存在，请重新输入！")
+        before_laplacian = cv2.Laplacian(before_region, cv2.CV_64F)
+        before_noise = np.var(before_laplacian)
+
+    # 后部分区域
+    after_region = gray[y:y + h, colon_end_x:x + w]
+    if after_region.size == 0:
+        after_noise = 0
+    else:
+        after_laplacian = cv2.Laplacian(after_region, cv2.CV_64F)
+        after_noise = np.var(after_laplacian)
+
+    return before_noise, after_noise
+
+
+# ELA分析
+def ela_analysis(image_path, quality=90):
+    img = Image.open(image_path)
+    temp_path = "temp.jpg"
+    img.save(temp_path, "JPEG", quality=quality)
+    temp_img = cv2.imread(temp_path)
+    orig_img = cv2.imread(image_path)
+    if temp_img.shape != orig_img.shape:
+        raise ValueError("Original and temporary images have different shapes.")
+    diff = cv2.absdiff(orig_img, temp_img)
+    exaggerated = cv2.convertScaleAbs(diff, alpha=10)
+    return exaggerated
+
+
+# 检查篡改痕迹（比较冒号前后）
+def detect_tampering_colon(image_path, noise_diff_threshold=500):
+    img = load_image(image_path)
+    gray, _ = preprocess_image(img)
+
+    # 定位包含冒号的文字
+    text_boxes = locate_colon_text(img)
+    if not text_boxes:
+        return "未找到包含冒号的文字区域", []
+
+    # 估算每个字符的宽度
+    results = []
+    for box in text_boxes:
+        x, y, w, h, text, colon_idx = box
+        char_width_approx = w // len(text)  # 近似每个字符宽度
+
+        # 计算前后噪声
+        before_noise, after_noise = noise_analysis_colon_split(gray, (x, y, w, h), colon_idx, char_width_approx)
+        noise_diff = after_noise - before_noise
+        is_tampered = noise_diff > noise_diff_threshold
+
+        results.append((x, y, w, h, text, before_noise, after_noise, is_tampered))
+        print(
+            f"文字: '{text}', 前噪声: {before_noise:.2f}, 后噪声: {after_noise:.2f}, 差异: {noise_diff:.2f}, 是否篡改: {is_tampered}")
+
+    tampered_count = sum(1 for _, _, _, _, _, _, _, is_tampered in results if is_tampered)
+    return f"检测到 {len(text_boxes)} 个含冒号文字区域，其中 {tampered_count} 个可能被篡改", results
+
+
+# 可视化结果
+def show_results(img, edges, ela, text_results, output_path="output.png"):
+    """
+    可视化结果，标注冒号前后区域及其篡改状态。
+
+    参数：
+        img (ndarray): 原始图像
+        edges (ndarray): 边缘检测结果
+        ela (ndarray): ELA分析结果
+        text_results (list): [(x, y, w, h, text, before_noise, after_noise, is_tampered), ...]
+        output_path (str): 输出图像保存路径
+    """
+    plt.figure(figsize=(12, 4))
+    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    for x, y, w, h, text, before_noise, after_noise, is_tampered in text_results:
+        char_width = w // len(text)
+        colon_x = x + text.index(':' if ':' in text else '：') * char_width
+        colon_end_x = colon_x + char_width
+
+        # 前部分（绿色）
+        cv2.rectangle(img_rgb, (x, y), (colon_x, y + h), (0, 255, 0), 1)
+        # 后部分（根据篡改状态）
+        color = (255, 0, 0) if is_tampered else (0, 255, 0)
+        cv2.rectangle(img_rgb, (colon_end_x, y), (x + w, y + h), color, 2)
+
+        # 标注文字和状态
+        label = f"{text[:10]} {'(T)' if is_tampered else ''}"
+        cv2.putText(img_rgb, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+
+    plt.subplot(131), plt.imshow(img_rgb), plt.title('Original + Text Detection')
+    plt.subplot(132), plt.imshow(edges, cmap='gray'), plt.title('Edges')
+    plt.subplot(133), plt.imshow(ela, cmap='gray'), plt.title('ELA')
+
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"结果已保存至: {output_path}")
+
+
+# 主程序
+if __name__ == "__main__":
+    image_path = "test_image.jpg"  # 替换为你的图片路径
+
+    # 检测篡改
+    result, text_results = detect_tampering_colon(image_path, noise_diff_threshold=500)
+    print(f"检测结果: {result}")
+
+    # 可视化
+    img = load_image(image_path)
+    _, blurred = preprocess_image(img)
+    edges = edge_detection(blurred)
+    ela = ela_analysis(image_path)
+    show_results(img, edges, ela, text_results, output_path="tamper_detection_results.png")

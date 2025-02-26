@@ -13,7 +13,7 @@ xshk = pd.DataFrame()
 
 # 列映射
 xshk["申请人"] = filtered_df["姓名"]
-xshk["上报日期"] = filtered_df["合作日期"]
+xshk["上报日期"] = pd.to_datetime(filtered_df["合作日期"]).dt.strftime('%Y年%m月%d日')
 xshk["新总回款金额"] = filtered_df["回款金额"]
 xshk["申请人区域"] = filtered_df["销售地区"]
 xshk["销售经理"] = filtered_df["销售经理"]
