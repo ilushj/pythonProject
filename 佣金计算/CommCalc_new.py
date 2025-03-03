@@ -9,9 +9,9 @@ warnings.filterwarnings('ignore', category=UserWarning, message='Workbook contai
 month = input("请输入月份（如：1、2、3...）：")
 months = [month.strip() for month in month.split(",")]
 # 获取文件路径
-rule_pathPath = input("请输入易久保规则文件路径（默认佣金下的佣金规则目录）：")
-current_month_path_prefix = input("请输入当月计算文件路径前缀（默认：2025佣金）：")
-output_path_prefix = input("请输入结果文件路径前缀（默认:2025佣金）：")
+rule_pathPath = input("请输入易久保规则文件路径（默认佣金下的佣金规则目录）：") + "\\"
+current_month_path_prefix = input("请输入当月计算文件路径前缀（默认：2025佣金\source）：") + "\\"
+output_path_prefix = input("请输入结果文件路径前缀（默认:2025佣金）：") + "\\"
 
 # 遍历每个月份，执行对应的操作
 for month in months:

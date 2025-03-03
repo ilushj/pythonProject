@@ -22,26 +22,47 @@ SELECT
     MIN(ep.insustartdate) AS 最早投保日期,
     MAX(ep.insuenddate) AS 最晚投保日期,
     COUNT(DISTINCT claim.id) AS 出险次数,
-    SUM(CASE WHEN claim.CASETYPE = 8 THEN 1 ELSE 0 END) AS 骨折次数,
-    SUM(claim.paid) / 100 AS 全量实付金额,
-    SUM(claim.unpaid) / 100 AS 全量预估金额,
-    SUM(CASE WHEN claim.CASETYPE = 8 THEN claim.paid ELSE 0 END) / 100 AS 骨折实付金额,
-    SUM(CASE WHEN claim.CASETYPE = 8 THEN claim.unpaid ELSE 0 END) / 100 AS 骨折预估金额,
-    SUM(CASE WHEN claim.`status` = 9 THEN 1 ELSE 0 END) AS 撤案数,
-    SUM(CASE WHEN claim.`status` = 9 AND claim.CASETYPE = 8 THEN 1 ELSE 0 END) AS 骨折撤案
-FROM
-    claimcase AS claim
-    INNER JOIN kaimai.employeeperiod AS ep ON claim.employee_id = ep.employee_id
-    LEFT JOIN customer AS c ON ep.customer_id = c.id
-    LEFT JOIN kaimai.customersalesman AS cs ON cs.customer_id = c.id
-    LEFT JOIN kaimai.salesman AS s ON s.ID = cs.salesman_id
-WHERE
-    ((ep.insustartdate >= '2022-01-01' AND ep.insustartdate < '2025-03-01')
-        OR (claim.createdate >= '2022-01-01' AND claim.createdate < '2025-03-01'))
+    COUNT(DISTINCT CASE WHEN claim.CASETYPE = 2 THEN claim.id END) AS 骨折次数,
+    SUM(claim.total_paid) / 100 AS 全量实付金额,
+    SUM(claim.total_unpaid) / 100 AS 全量预估金额,
+    SUM(claim.fracture_paid) / 100 AS 骨折实付金额,
+    SUM(claim.fracture_unpaid) / 100 AS 骨折预估金额,
+    -- 关键修复：撤案数按案件去重统计
+    COUNT(DISTINCT CASE WHEN claim.`status` = 9 THEN claim.id END) AS 撤案数,
+    COUNT(DISTINCT CASE WHEN claim.`status` = 9 AND claim.CASETYPE = 2 THEN claim.id END) AS 骨折撤案
+FROM (
+    SELECT 
+        id,
+        employee_id,
+        paid AS total_paid,
+        unpaid AS total_unpaid,
+        CASETYPE,
+				casedate,
+        createdate,
+        `status`,  -- 确保外层可访问 status 字段
+        CASE WHEN CASETYPE = 8 THEN paid ELSE 0 END AS fracture_paid,
+        CASE WHEN CASETYPE = 8 THEN unpaid ELSE 0 END AS fracture_unpaid
+    FROM claimcase
+) AS claim
+LEFT JOIN kaimai.employeeperiod AS ep 
+    ON claim.employee_id = ep.employee_id
     AND ep.insuenddate != ep.insustartdate
     AND ep.`status` = 2
     AND ep.remark IS NOT NULL
     AND ep.remark != ''
+LEFT JOIN customer AS c 
+    ON ep.customer_id = c.id
+LEFT JOIN kaimai.customersalesman AS cs 
+    ON cs.customer_id = c.id
+LEFT JOIN kaimai.salesman AS s 
+    ON s.ID = cs.salesman_id
+WHERE 
+    (
+        (ep.insustartdate >= '2022-01-01' AND ep.insustartdate < '2025-03-01')
+        AND 
+        (claim.casedate >= '2022-01-01')
+    )
+		AND claim.casedate BETWEEN ep.insustartdate AND ep.insuenddate
     AND NOT EXISTS (
         SELECT 1
         FROM kaimai.customer c2
@@ -71,7 +92,7 @@ WHERE
         AND c2.company_id IN (1, 3, 4, 5, 10, 901)
     )
     AND (
-        (ep.insustartdate >= '2022-01-01' AND ep.insustartdate < '2025-03-01')
+        (ep.insustartdate >= '2022-01-01' AND ep.insustartdate < '2025-04-01')
     )
     AND ep.remark IN ({})
 GROUP BY
