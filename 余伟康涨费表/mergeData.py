@@ -4,7 +4,7 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
 
 # 读取Excel文件
-file_path = r'D:\数据总表\1.xlsx'
+file_path = input("请输入文件完整路径：")
 df = pd.read_excel(file_path)
 
 # 检查数据类型
