@@ -7,11 +7,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
 file_path = input("请输入文件完整路径：")
 df = pd.read_excel(file_path)
 
-# 检查数据类型
-print(df.dtypes)
 
-# 数据预览
-print(df.head())
 
 # 清洗“客户赔付率”字段
 # 假设“客户赔付率”字段包含百分号,需要移除百分号并转换为浮点数
