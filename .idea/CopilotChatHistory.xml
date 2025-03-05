@@ -4,10 +4,468 @@
     <option name="conversations">
       <list>
         <Conversation>
+          <option name="createTime" value="1741164798336" />
+          <option name="id" value="019565826180779293853650d9a72bee" />
+          <option name="title" value="@workspace 详细解释" />
+          <option name="turns">
+            <list>
+              <Turn>
+                <option name="agent" value="workspace" />
+                <option name="answer" value="&#10;&#10;当前`xovzm_wfkorxzgvh`函数存在以下可优化点：&#10;&#10;8. **性能问题**：使用循环遍历重复项效率较低，可用tilfkyb优化&#10;7. **逻辑冗余**：部分条件判断可合并简化&#10;6. **潜在漏洞**：未处理&quot;批减&quot;出现在多个组别的情况&#10;&#10;建议优化后的实现：&#10;&#10;###[凭证转换/pvGlVcxvo.kb](urov:///佣金计算/XlnnXzox.kb)&#10;```kbgslm&#10;wvu xovzm_wfkorxzgvh(wu):&#10;    # 按身份证分组处理&#10;    tilfkvw = wu.tilfkyb('身份证', tilfk_pvbh=Uzohv)&#10;    &#10;    wvu kilxvhh_tilfk(tilfk):&#10;        ru ovm(tilfk) == 8:&#10;            ivgfim tilfk&#10;        &#10;        # 组别号唯一时的处理&#10;        ru tilfk['组别号'].mfmrjfv() == 8:&#10;            ivgfim tilfk&#10;        &#10;        # 多组别时保留非批减记录&#10;        ru '批减' rm tilfk['变更类型'].ezofvh:&#10;            ivgfim tilfk[tilfk['变更类型'] != '批减']&#10;        &#10;        ivgfim tilfk&#10;&#10;    # 应用处理逻辑并重置索引&#10;    ivgfim tilfkvw.zkkob(kilxvhh_tilfk).ivhvg_rmwvc(wilk=Gifv)&#10;```&#10;&#10;优化说明：&#10;8. 使用tilfkyb替代显式循环，提升大数据量下的性能&#10;7. 简化条件判断逻辑，明确处理优先级&#10;6. 保留原有业务逻辑：当存在多组别时优先过滤批减记录&#10;5. 自动处理单记录/多记录场景，代码可读性更好" />
+                <option name="chatResource" value="user" />
+                <option name="codeReferences">
+                  <list>
+                    <CodeReferencesBean>
+                      <option name="content" value="wvu xovzm_wfkorxzgvh(wu):&#10;    wfkorxzgvw_rwh = wu[wu['身份证'].wfkorxzgvw(pvvk=Uzohv)]['身份证'].fmrjfv()&#10;&#10;    ru mlg wfkorxzgvw_rwh.zmb():&#10;        ivgfim wu&#10;&#10;    ildh_gl_pvvk = []&#10;    uli rw_mfn rm wfkorxzgvw_rwh:&#10;        rw_ildh = wu[wu['身份证'] == rw_mfn]&#10;        ru rw_ildh['组别号'].mfmrjfv() &gt; 8:&#10;            ru '批减' rm rw_ildh['变更类型'].ezofvh:&#10;                pvvk_ildh = rw_ildh[rw_ildh['变更类型'] != '批减']&#10;                ildh_gl_pvvk.vcgvmw(pvvk_ildh.rmwvc.glorhg())&#10;            vohv:&#10;                ildh_gl_pvvk.vcgvmw(rw_ildh.rmwvc.glorhg())&#10;        vohv:&#10;            ildh_gl_pvvk.vcgvmw(rw_ildh.rmwvc.glorhg())&#10;&#10;    ivgfim wu.olx[ildh_gl_pvvk].ivhvg_rmwvc(wilk=Gifv)" />
+                      <option name="end_line" value="144" />
+                      <option name="filename" value="keToExcel.py" />
+                      <option name="language" value="Python" />
+                      <option name="range">
+                        <Range>
+                          <option name="end">
+                            <Position>
+                              <option name="character" value="54" />
+                              <option name="line" value="144" />
+                            </Position>
+                          </option>
+                          <option name="start">
+                            <Position>
+                              <option name="line" value="126" />
+                            </Position>
+                          </option>
+                        </Range>
+                      </option>
+                      <option name="start_line" value="126" />
+                      <option name="type" value="editor" />
+                      <option name="url" value="file:///C:/Users/ilush/PycharmProjects/pythonProject/凭证转换/keToExcel.py" />
+                    </CodeReferencesBean>
+                  </list>
+                </option>
+                <option name="codebaseReferences">
+                  <list>
+                    <KnowledgeReference>
+                      <option name="chunk" value="清洗数据\表格转换\newXSHK.py: import pandas as pd&#10;# 读取原 Excel 文件&#10;file_path = &quot;业绩转换.xlsx&quot;&#10;with pd.ExcelFile(file_path) as excel:&#10;    df = pd.read_excel(excel, sheet_name=&quot;CWYJ&quot;)&#10;# 条件筛选：新老业绩列中只选择值为 &quot;新业绩&quot;、&quot;新2&quot;、&quot;新结&quot; 的数据行&#10;filtered_df = df[df[&quot;新老业绩&quot;].isin([&quot;新业绩&quot;, &quot;新2&quot;, &quot;新结&quot;])]&#10;# 创建新的数据表 xshk&#10;xshk = pd.DataFrame()&#10;# 列映射&#10;xshk[&quot;申请人&quot;] = filtered_df[&quot;姓名&quot;]&#10;xshk[&quot;上报日期&quot;] = pd.to_datetime(filtered_df[&quot;合作日期&quot;]).dt.strftime('%Y年%m月%d日')&#10;xshk[&quot;新总回款金额&quot;] = filtered_df[&quot;回款金额&quot;]&#10;xshk[&quot;申请人区域&quot;] = filtered_df[&quot;销售地区&quot;]&#10;xshk[&quot;销售经理&quot;] = filtered_df[&quot;销售经理&quot;]&#10;xshk[&quot;销售总监&quot;] = filtered_df[&quot;销售总监&quot;]&#10;xshk[&quot;销售副总&quot;] = filtered_df[&quot;销售副总&quot;]&#10;xshk[&quot;总经理&quot;] = filtered_df[&quot;总经理&quot;]&#10;xshk[&quot;总裁&quot;] = filtered_df[&quot;总裁&quot;]&#10;# 添加空列&#10;empty_columns = [&#10;    &quot;下店合作新业绩&quot;,&#10;    &quot;市场引流医院新业绩&quot;,&#10;    &quot;一个月内二次医院成交的新业绩&quot;,&#10;    &quot;回收欠新业绩&quot;,&#10;    &quot;职位&quot;,&#10;    &quot;在职情况&quot;,&#10;    &quot;上海经理排名周期&quot;,&#10;    &quot;销售9月份抽调机制&quot;," />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="35" />
+                          <option name="fileName" value="清洗数据\表格转换\newXSHK.py" />
+                          <option name="source" value="$PROJECT_DIR$/清洗数据/表格转换/newXSHK.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="全量保全\checkMail.py: import email&#10;import imaplib&#10;import os&#10;import subprocess&#10;import sys&#10;import time&#10;from datetime import datetime&#10;from email.header import decode_header, make_header&#10;import configparser  # 导入 configparser 用于读取配置文件&#10;import schedule&#10;# 读取配置文件&#10;config = configparser.ConfigParser()&#10;config.read('checkmail.ini')&#10;# 邮箱配置&#10;EMAIL = config.get('mail', 'email')  # 从配置文件读取邮箱地址&#10;PASSWORD = config.get('mail', 'password')  # 从配置文件读取邮箱密码&#10;IMAP_SERVER = config.get('mail', 'imap_server')  # 从配置文件读取IMAP服务器地址&#10;IMAP_PORT = config.getint('mail', 'imap_port')  # 从配置文件读取IMAP端口（转换为整数）&#10;SAVE_DIRECTORY = config.get('mail', 'save_directory')  # 从配置文件读取保存目录&#10;# 邮件过滤配置&#10;FROM_ADDRESS = config.get('filter', 'from_address')  # 从配置文件读取发件人地址&#10;SUBJECT_KEYWORD = config.get('filter', 'subject_keyword')  # 从配置文件读取主题关键词&#10;# 监控邮件并保存附件的函数&#10;def check_email():&#10;    try:&#10;        # 登录到邮箱，使用IMAP协议&#10;        mail = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_PORT)&#10;        mail.login(EMAIL, PASSWORD)&#10;        print(&quot;登录成功&quot;)&#10;    except Exception as e:&#10;        # 登录失败时捕获异常并打印错误信息&#10;        print(f&quot;登录失败: {e}&quot;)&#10;        return" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="39" />
+                          <option name="fileName" value="全量保全\checkMail.py" />
+                          <option name="source" value="$PROJECT_DIR$/全量保全/checkMail.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="批量下载图片\ComparePhoto.py: import cv2&#10;import numpy as np&#10;import os&#10;import xlsxwriter&#10;import logging&#10;import shutil&#10;# 设置日志记录&#10;logging.basicConfig(filename='image_quality.log', level=logging.INFO,&#10;                    format='%(asctime)s - %(levelname)s - %(message)s')&#10;# 输入目录路径&#10;dir_path = input(&quot;请输入图片目录路径：&quot;)&#10;# 创建 Excel 文件&#10;workbook = xlsxwriter.Workbook('image_quality.xlsx')&#10;worksheet = workbook.add_worksheet()&#10;# 设置标题行&#10;worksheet.write(0, 0, '文件名')&#10;worksheet.write(0, 1, '黑边检测')&#10;worksheet.write(0, 2, '偏色度')&#10;worksheet.write(0, 3, '清晰度 (拉普拉斯方差)')&#10;worksheet.write(0, 4, '熵值')&#10;worksheet.write(0, 5, '边缘像素比例')&#10;# 初始化行号&#10;row = 1&#10;# 创建“疑似”目录&#10;suspicious_dir = os.path.join(dir_path, &quot;疑似&quot;)&#10;if not os.path.exists(suspicious_dir):&#10;    os.makedirs(suspicious_dir)&#10;# 黑边检测函数&#10;def check_black_edge(img, edge_width=6, brightness_threshold=60):&#10;    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="38" />
+                          <option name="fileName" value="批量下载图片\ComparePhoto.py" />
+                          <option name="source" value="$PROJECT_DIR$/批量下载图片/ComparePhoto.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="批量下载图片\ComparePhoto.py: img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), cv2.IMREAD_COLOR)&#10;# 检查图像是否为空&#10;if img is None:&#10;    logging.error(f&quot;无法读取图像文件：{img_path}&quot;)&#10;    continue&#10;# 黑边检测&#10;black_edge = check_black_edge(img)&#10;# 偏色度检测&#10;color_deviation = check_color_deviation(img)&#10;# 拉普拉斯方差（清晰度）检测&#10;clarity = calculate_laplacian_variance(img)&#10;# 熵值检测&#10;entropy = calculate_entropy(img)&#10;# 边缘像素比例检测&#10;edge_pixel_ratio = calculate_edge_pixel_ratio(img)&#10;# 写入 Excel 文件&#10;worksheet.write(row, 0, filename)&#10;worksheet.write(row, 1, '是' if black_edge else '否')&#10;worksheet.write(row, 2, color_deviation)&#10;worksheet.write(row, 3, clarity)&#10;worksheet.write(row, 4, entropy)&#10;worksheet.write(row, 5, edge_pixel_ratio)&#10;# 如果检测到黑边、低清晰度、低熵值或低边缘像素比例，将文件复制到“疑似”目录" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="126" />
+                          <option name="fileName" value="批量下载图片\ComparePhoto.py" />
+                          <option name="source" value="$PROJECT_DIR$/批量下载图片/ComparePhoto.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="96" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="清洗数据\cleanD.py: df_orders = pd.read_excel(file_path, sheet_name='新-系统订单')&#10;df_recovery = pd.read_excel(file_path, sheet_name='新-回收欠款')&#10;# 删除旧的工作表（如果存在）&#10;with pd.ExcelWriter(file_path, engine='openpyxl', mode='a') as writer:&#10;    if '销售业绩清洗' in writer.book.sheetnames:&#10;        del writer.book['销售业绩清洗']&#10;    # 创建新工作表&#10;    df_results = pd.DataFrame(&#10;        columns=[&quot;销售归属&quot;, &quot;销售日期&quot;, &quot;业绩类型&quot;, &quot;回款金额&quot;, &quot;订单编号&quot;, &quot;门店编码&quot;, &quot;门店名称&quot;, &quot;新老业绩判定&quot;,&#10;                 &quot;客户名称&quot;])&#10;    # 处理系统订单&#10;    for index, row in df_orders.iterrows():&#10;        if pd.notna(row['归属人-业绩归属']):&#10;            order_type = ''&#10;            if '下店' in str(row['顾客归属']) and row['新老业绩判定'].startswith('新'):&#10;                order_type = '下店新'&#10;            elif '下店' in str(row['顾客归属']) and row['新老业绩判定'].startswith('老'):&#10;                order_type = '下店老'&#10;            elif row['新老业绩判定'].startswith('新'):&#10;                order_type = '引流新'&#10;            else:" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="71" />
+                          <option name="fileName" value="清洗数据\cleanD.py" />
+                          <option name="source" value="$PROJECT_DIR$/清洗数据/cleanD.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="48" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="发票派送\invoiceDistribuPro.py:         folder_path = os.path.join(root_dir, folder_name)&#10;        if os.path.isdir(folder_path):&#10;            zip_file_name = f&quot;{folder_name}.zip&quot;&#10;            zip_file_path = os.path.join(root_dir, zip_file_name)&#10;            with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zip_file:&#10;                for root, _, files in os.walk(folder_path):&#10;                    for file in files:&#10;                        file_path = os.path.join(root, file)&#10;                        zip_file.write(file_path, os.path.relpath(file_path, root_dir))&#10;    print(&quot;打包完成！&quot;)&#10;def main():&#10;    config_path = os.path.join(os.getcwd(), 'config.ini')  # 确保文件名正确&#10;    config = read_config(config_path)&#10;    if config is None:&#10;        return&#10;    file_path = config.get('file_path')&#10;    directory_path = config.get('directory_path')&#10;    workbook_path = os.path.dirname(file_path)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="75" />
+                          <option name="fileName" value="发票派送\invoiceDistribuPro.py" />
+                          <option name="source" value="$PROJECT_DIR$/发票派送/invoiceDistribuPro.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="57" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="佣金计算\CommCalc_new.py: import pandas as pd&#10;import numpy as np&#10;import warnings&#10;warnings.filterwarnings('ignore', category=UserWarning, message='Workbook contains no default style, apply openpyxl\'s default')&#10;# 获取用户输入的月份&#10;month = input(&quot;请输入月份（如：1、2、3...）：&quot;)&#10;months = [month.strip() for month in month.split(&quot;,&quot;)]&#10;# 获取文件路径&#10;rule_pathPath = input(&quot;请输入易久保规则文件路径（默认佣金下的佣金规则目录）：&quot;) + &quot;\\&quot;&#10;current_month_path_prefix = input(&quot;请输入当月计算文件路径前缀（默认：2025佣金\source）：&quot;) + &quot;\\&quot;&#10;output_path_prefix = input(&quot;请输入结果文件路径前缀（默认:2025佣金）：&quot;) + &quot;\\&quot;&#10;# 遍历每个月份，执行对应的操作&#10;for month in months:&#10;    print(f&quot;正在处理 {month} 月的数据……&quot;)&#10;    # 1. 文件路径&#10;    rule_path = f&quot;{rule_pathPath}易久保规则.xlsx&quot;&#10;    rule_tpd_path = f&quot;{rule_pathPath}TPD_RULE.xlsx&quot;&#10;    year_path = f&quot;{current_month_path_prefix}{month}全年.xlsx&quot;&#10;    current_month_path = f&quot;{current_month_path_prefix}{month}当月.xlsx&quot;&#10;    hulin_file = f&quot;{current_month_path_prefix}{month}胡林特殊.xlsx&quot;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="24" />
+                          <option name="fileName" value="佣金计算\CommCalc_new.py" />
+                          <option name="source" value="$PROJECT_DIR$/佣金计算/CommCalc_new.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="群发邮件\sendEmail.py: import os&#10;import smtplib&#10;from email import encoders&#10;from email.header import Header&#10;from email.mime.base import MIMEBase&#10;from email.mime.multipart import MIMEMultipart&#10;from email.mime.text import MIMEText&#10;import openpyxl&#10;import configparser&#10;import ctypes&#10;output_log = &quot;执行完成！ \n&quot;  # 初始化日志字符串&#10;# 创建一个ConfigParser对象并读取配置文件&#10;config = configparser.ConfigParser()&#10;config.read('config.ini', encoding='utf-8')  # 读取配置文件，指定UTF-8编码&#10;# 从配置文件中获取必要的设置&#10;file_path = config.get('Settings', 'file_path').replace('\\', '\\\\')  # Excel文件路径，替换反斜杠&#10;from_email = config.get('Settings', 'from_email').replace('\\', '\\\\')  # 发件人邮箱，替换反斜杠&#10;password = config.get('Settings', 'password')  # 发件人邮箱密码&#10;subject = config.get('Settings', 'subject')  # 邮件主题&#10;email_text = config.get('Settings', 'text')  # 邮件正文&#10;directory_path = config.get('Settings', 'directory_path')  # 附件目录&#10;cc_emails = config.get('Settings', 'cc_email')  # 抄送邮箱，多个邮箱用逗号分隔&#10;smtp_host = config.get('Settings', 'smtp_host')  # SMTP服务器地址" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="26" />
+                          <option name="fileName" value="群发邮件\sendEmail.py" />
+                          <option name="source" value="$PROJECT_DIR$/群发邮件/sendEmail.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="凭证转换\exTodoc.py: table.columns[5].width = Inches(1.6)  # 到期日期列&#10;table.columns[6].width = Inches(0.3)  # 保额列&#10;# 读取 Excel 数据表&#10;df = pd.read_excel(excel_file_path, dtype={'证件号码': str}, skiprows=6)  # 根据实际情况调整 skiprows&#10;# 清理列名空格，并确保列名一致&#10;df.columns = df.columns.str.strip()  # 去掉列名的空格&#10;# 筛选 &quot;批增/批减&quot; 列中为 &quot;批增&quot; 的数据&#10;df_filtered = df[df['批增/批减'] == '批增'].copy()&#10;# 添加表格头部&#10;header_cells = table.rows[0].cells&#10;header_cells[0].text = '序号'&#10;header_cells[1].text = '姓名'&#10;header_cells[2].text = '身份证号码'&#10;header_cells[3].text = '变更类型'&#10;header_cells[4].text = '生效日期'&#10;header_cells[5].text = '到期日期'&#10;header_cells[6].text = '保额'&#10;# 填充表格内容，并生成自增序号&#10;for i, (index, row) in enumerate(df_filtered.iterrows(), start=1):" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="108" />
+                          <option name="fileName" value="凭证转换\exTodoc.py" />
+                          <option name="source" value="$PROJECT_DIR$/凭证转换/exTodoc.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="85" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="preserve.py: import pandas as pd&#10;from datetime import datetime, timedelta&#10;import os&#10;def process_excel_files(directory):&#10;    filenames = os.listdir(directory)&#10;    for filename in filenames:&#10;        if filename.endswith(&quot;.xlsx&quot;):&#10;            file_path = os.path.join(directory, filename)&#10;            try:&#10;                excel_file = pd.ExcelFile(file_path)&#10;                sheet_names = excel_file.sheet_names&#10;                if &quot;增员&quot; in sheet_names:&#10;                    df_add = pd.read_excel(file_path, sheet_name=&quot;增员&quot;)&#10;                    # 只取姓名列不为空的数据&#10;                    df_add = df_add[df_add.filter(like='姓名').notnull().any(axis=1)]&#10;                    new_df_add = pd.DataFrame(&#10;                        columns=[&quot;姓名&quot;, &quot;身份证&quot;, &quot;护照&quot;, &quot;变更类型&quot;, &quot;生效日期&quot;, &quot;工种&quot;, &quot;有无社保&quot;, &quot;备注&quot;])&#10;                    for col in df_add.columns:&#10;                        if &quot;姓名&quot; in col:&#10;                            new_df_add[&quot;姓名&quot;] = df_add[col]&#10;                        elif &quot;证件号码&quot; in col:&#10;                            new_df_add[&quot;身份证&quot;] = df_add[col]" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="28" />
+                          <option name="fileName" value="preserve.py" />
+                          <option name="source" value="$PROJECT_DIR$/preserve.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\shelf\_2025_3_3_2_21___Changes_.xml:   &lt;option name=&quot;SHELVED_PATH&quot; value=&quot;$PROJECT_DIR$/.idea/shelf/在进行更新之前于_2025_3_3_下午2_21_取消提交了更改_[Changes]/downloadPicPor.exe&quot; /&gt;&#10;&lt;/binary&gt;&#10;&lt;binary&gt;&#10;  &lt;option name=&quot;BEFORE_PATH&quot; /&gt;&#10;  &lt;option name=&quot;AFTER_PATH&quot; value=&quot;汇总报表/2025-02-21业务人数竞赛.xlsx&quot; /&gt;&#10;  &lt;option name=&quot;SHELVED_PATH&quot; value=&quot;$PROJECT_DIR$/.idea/shelf/在进行更新之前于_2025_3_3_下午2_21_取消提交了更改_[Changes]/2025-02-21业务人数竞赛.xlsx&quot; /&gt;&#10;&lt;/binary&gt;&#10;&lt;binary&gt;&#10;  &lt;option name=&quot;BEFORE_PATH&quot; value=&quot;群发邮件/config.ini发票&quot; /&gt;&#10;  &lt;option name=&quot;AFTER_PATH&quot; /&gt;&#10;  &lt;option name=&quot;SHELVED_PATH&quot; /&gt;&#10;&lt;/binary&gt;&#10;&lt;binary&gt;&#10;  &lt;option name=&quot;BEFORE_PATH&quot; value=&quot;群发邮件/获取通讯录/奇点保险公司通讯录.xlsx&quot; /&gt;&#10;  &lt;option name=&quot;AFTER_PATH&quot; value=&quot;群发邮件/获取通讯录/奇点保险公司通讯录.xlsx&quot; /&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="41" />
+                          <option name="fileName" value=".idea\shelf\_2025_3_3_2_21___Changes_.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/shelf/_2025_3_3_2_21___Changes_.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="27" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="佣金计算\CommCalc.py: import pandas as pd&#10;# 获取用户输入的月份&#10;month = input(&quot;请输入月份（如：1、2、3...）：&quot;)&#10;months = [month.strip() for month in month.split(&quot;,&quot;)]&#10;# 遍历每个月份，执行对应的操作&#10;for month in months:&#10;    # 1. 文件路径&#10;    rule_path = '易久保规则.xlsx'&#10;    year_path = f&quot;{month}全年.xlsx&quot;&#10;    current_month_path = f&quot;{month}当月.xlsx&quot;&#10;    output_path = f&quot;{month}月佣金数据.xlsx&quot;  # 结果文件路径&#10;    hulin_file = f&quot;{month}胡林特殊.xlsx&quot;  # 结果文件路径&#10;    # 2. 读取规则和全年表&#10;    rules = pd.read_excel(rule_path)&#10;    year_data = pd.read_excel(year_path)&#10;    current_month_data = pd.read_excel(current_month_path)&#10;    hulin_data = pd.read_excel(hulin_file)&#10;    # 提取胡林特殊.xlsx中的“业务员”和“客户名称”列&#10;    hulin_data = hulin_data[['业务员', '客户名称']].drop_duplicates()&#10;    # 3. 百分比转换函数&#10;    def percentage_to_float(series):&#10;        &quot;&quot;&quot;&#10;        将百分比字符串列转换为浮点数（0~1）。&#10;        若已是小数形式（如 0.2），直接返回。" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="29" />
+                          <option name="fileName" value="佣金计算\CommCalc.py" />
+                          <option name="source" value="$PROJECT_DIR$/佣金计算/CommCalc.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="清洗数据\cleanD.py:                     &quot;回款金额&quot;: row['理论回款业绩'],&#10;                    &quot;订单编号&quot;: row['顾客订单编号-历史欠款'],&#10;                    &quot;门店编码&quot;: row['门店编码'],&#10;                    &quot;门店名称&quot;: row['门店名称'],&#10;                    &quot;新老业绩判定&quot;: row['新老业绩判定'],&#10;                    &quot;客户名称&quot;: row['顾客姓名-历史欠款']&#10;                }&#10;                df_results = pd.concat([df_results, pd.DataFrame([new_row])], ignore_index=True)&#10;        # 计算合计&#10;        df_results['合计'] = df_results[['回款金额']].sum(axis=1)&#10;        # 写入新工作表&#10;        df_results.to_excel(writer, sheet_name='销售业绩清洗', index=False)&#10;def generate_xshk():&#10;    # 获取当前工作目录（即exe文件所在目录）&#10;    current_dir = os.getcwd()&#10;    # 构造文件路径&#10;    file_path = os.path.join(current_dir, '数据清洗.xlsx')&#10;    # 读取数据&#10;    df_source = pd.read_excel(file_path, sheet_name='销售业绩清洗')&#10;    # 删除旧的工作表（如果存在）&#10;    with pd.ExcelWriter(file_path, engine='openpyxl', mode='a') as writer:&#10;        if '新XSHK404' in writer.book.sheetnames:&#10;            del writer.book['新XSHK404']&#10;        # 创建新工作表" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="129" />
+                          <option name="fileName" value="清洗数据\cleanD.py" />
+                          <option name="source" value="$PROJECT_DIR$/清洗数据/cleanD.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="100" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="发票派送\寻找发票\extracPDF.build\static_src\MainProgram.c: #elif PYTHON_VERSION &lt; 0x370&#10;    PySys_SetPath(getBinaryDirectoryWideChars(true));&#10;    Py_SetPath(getBinaryDirectoryWideChars(true));&#10;    // NUITKA_PRINTF_TRACE(&quot;Final Py_GetPath is '%ls'.\n&quot;, Py_GetPath());&#10;#endif&#10;#ifdef _NUITKA_EXPERIMENTAL_DUMP_PY_PATH_CONFIG&#10;    wprintf(L&quot;_Py_path_config.program_full_path='%lS'\n&quot;, _Py_path_config.program_full_path);&#10;    wprintf(L&quot;_Py_path_config.program_name='%lS'\n&quot;, _Py_path_config.program_name);&#10;    wprintf(L&quot;_Py_path_config.prefix='%lS'\n&quot;, _Py_path_config.prefix);&#10;    wprintf(L&quot;_Py_path_config.exec_prefix='%lS'\n&quot;, _Py_path_config.exec_prefix);&#10;    wprintf(L&quot;_Py_path_config.module_search_path='%lS'\n&quot;, _Py_path_config.module_search_path);&#10;    wprintf(L&quot;_Py_path_config.home='%lS'\n&quot;, _Py_path_config.home);&#10;#endif&#10;}&#10;#endif" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="183" />
+                          <option name="fileName" value="发票派送\寻找发票\extracPDF.build\static_src\MainProgram.c" />
+                          <option name="source" value="$PROJECT_DIR$/发票派送/寻找发票/extracPDF.build/static_src/MainProgram.c" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="167" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="佣金计算\CommCalc_new.py: tpd_path = f&quot;{current_month_path_prefix}{month}TPD.xlsx&quot;  # 大病理赔&#10;output_path = f&quot;{output_path_prefix}{month}月佣金数据.xlsx&quot;  # 结果文件路径&#10;# 读取TPD_RULE.xlsx文件&#10;rules_df = pd.read_excel(rule_tpd_path)&#10;# 假设胡林特殊.xlsx 在同目录下，读取文件&#10;hulin_data = pd.read_excel(hulin_file)&#10;# 提取胡林特殊.xlsx中的“业务员”和“客户名称”列&#10;hulin_data = hulin_data[['业务员', '客户名称']].drop_duplicates()&#10;# 2. 读取规则和全年表&#10;rules = pd.read_excel(rule_path)&#10;year_data = pd.read_excel(year_path)&#10;year_data = year_data.sort_values(by='业务员', ascending=False)&#10;tpd_df = pd.read_excel(tpd_path)&#10;current_month_data = pd.read_excel(current_month_path)&#10;# 3. 百分比转换函数&#10;def percentage_to_float(series):&#10;    &quot;&quot;&quot;&#10;    将百分比字符串列转换为浮点数（0~1）。&#10;    若已是小数形式（如 0.2），直接返回。&#10;    &quot;&quot;&quot;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="50" />
+                          <option name="fileName" value="佣金计算\CommCalc_new.py" />
+                          <option name="source" value="$PROJECT_DIR$/佣金计算/CommCalc_new.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="25" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="清洗数据\cleanD.py: import os&#10;import openpyxl&#10;import pandas as pd&#10;def update_and_delete_column():&#10;    # 获取当前工作目录（即exe文件所在目录）&#10;    # current_dir = os.path.dirname(os.path.abspath(__file__))&#10;    current_dir = os.getcwd()&#10;    # 构造文件路径&#10;    order_file_path = os.path.join(current_dir, '订单业绩平分人.xlsx')&#10;    refund_file_path = os.path.join(current_dir, '欠款平分人业绩.xlsx')&#10;    # 读取excel文件&#10;    df_order = pd.read_excel(order_file_path, sheet_name='订单业绩平分人-查询', header=2)&#10;    df_refund = pd.read_excel(refund_file_path, sheet_name='欠款平分人业绩-查询', header=2)&#10;    # 更新“新-系统订单”工作表&#10;    df_order.loc[df_order['归属类型-业绩归属'] == '团队', '归属人-业绩归属'] += '（团队）'&#10;    df_order.drop(columns='归属类型-业绩归属', inplace=True)  # 删除H列&#10;    # 更新“新-回收欠款”工作表" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="23" />
+                          <option name="fileName" value="清洗数据\cleanD.py" />
+                          <option name="source" value="$PROJECT_DIR$/清洗数据/cleanD.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\shelf\在进行更新之前于_2024_12_2_下午6_23_取消提交了更改_[Changes]\shelved.patch: Index: 群发邮件/config.ini&#10;IDEA additional info:&#10;Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP&#10;&lt;+&gt;[Settings]\r\nfile_path = C:\\PycharmProjects\\pythonProject1\\群发邮件\\公司通讯录.xlsx\r\ndirectory_path = C:\\PycharmProjects\\pythonProject1\\群发邮件\r\nsmtp_host = smtp.qiye.aliyun.com\r\nsmtp_port = 465\r\ncc_email = support02@qidianbx.com\r\nfrom_email = support02@qidianbx.com\r\npassword = Kj20000071639\r\nsubject = 邮件主题：众安发票\r\ntext = 附件为您名下客户的众安发票，注意查收。谢谢！&#10;Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP&#10;&lt;+&gt;UTF-8&#10;===================================================================&#10;diff --git a/群发邮件/config.ini b/群发邮件/config.ini&#10;--- a/群发邮件/config.ini&#9;(revision 0d06139ccfa608290c04c52570c5e5c4b79f752f)&#10;+++ b/群发邮件/config.ini&#9;(date 1732089349808)&#10;@@ -1,10 +1,10 @@&#10; [Settings]&#10;-file_path = C:\PycharmProjects\pythonProject1\群发邮件\公司通讯录.xlsx" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="13" />
+                          <option name="fileName" value=".idea\shelf\在进行更新之前于_2024_12_2_下午6_23_取消提交了更改_[Changes]\shelved.patch" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/shelf/在进行更新之前于_2024_12_2_下午6_23_取消提交了更改_[Changes]/shelved.patch" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="发票派送\寻找发票\extracPDF.build\module.numpy.__config__.c:         code_object_desc,&#10;        constant_return_value,&#10;        defaults,&#10;        kw_defaults,&#10;        doc,&#10;        closure,&#10;        function_table_numpy$__config__,&#10;        sizeof(function_table_numpy$__config__) / sizeof(function_impl_code)&#10;    );&#10;}&#10;static PyMethodDef _method_def_create_compiled_function = {&#10;    &quot;create_compiled_function&quot;,&#10;    (PyCFunction)_create_compiled_function,&#10;    METH_VARARGS, NULL&#10;};&#10;#endif&#10;// Actual name might be different when loaded as a package.&#10;#if defined(_NUITKA_MODULE) &amp;&amp; 0&#10;static char const *module_full_name = &quot;numpy.__config__&quot;;&#10;#endif&#10;// Internal entry point for module code.&#10;PyObject *modulecode_numpy$__config__(PyThreadState *tstate, PyObject *module, struct Nuitka_MetaPathBasedLoaderEntry const *loader_entry) {&#10;    // Report entry to PGO.&#10;    PGO_onModuleEntered(&quot;numpy$__config__&quot;);&#10;    // Store the module for future use.&#10;    module_numpy$__config__ = module;&#10;    moduledict_numpy$__config__ = MODULE_DICT(module_numpy$__config__);&#10;    // Modules can be loaded again in case of errors, avoid the init being done again." />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="2768" />
+                          <option name="fileName" value="发票派送\寻找发票\extracPDF.build\module.numpy.__config__.c" />
+                          <option name="source" value="$PROJECT_DIR$/发票派送/寻找发票/extracPDF.build/module.numpy.__config__.c" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="2733" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="千服日报\MergeData.py: output_file = os.path.join(today_directory, f'{today}.xlsx')&#10;with pd.ExcelWriter(output_file, engine='openpyxl') as writer:&#10;    df_batch_add.to_excel(writer, sheet_name='批增', index=False)&#10;    df_batch_subtract.to_excel(writer, sheet_name='批减', index=False)&#10;    merged_df.to_excel(writer, sheet_name='重复数据', index=False)&#10;    if not replacement_df.empty:&#10;        replacement_df.to_excel(writer, sheet_name='替换数据', index=False)&#10;print(f'数据已成功合并并保存为 {output_file}')" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="141" />
+                          <option name="fileName" value="千服日报\MergeData.py" />
+                          <option name="source" value="$PROJECT_DIR$/千服日报/MergeData.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="133" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="发票派送\寻找发票\extracPDF.onefile-build\ccache-54584.txt: [2025-02-13T18:39:00.647623 47604] Config: (default) prefix_command_cpp = &#10;[2025-02-13T18:39:00.647623 47604] Config: (default) read_only = false&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) read_only_direct = false&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) recache = false&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) remote_only = false&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) remote_storage = &#10;[2025-02-13T18:39:00.647623 47604] Config: (default) reshare = false&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) run_second_cpp = true&#10;[2025-02-13T18:39:00.647623 47604] Config: (environment) sloppiness = include_file_ctime, include_file_mtime" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="43" />
+                          <option name="fileName" value="发票派送\寻找发票\extracPDF.onefile-build\ccache-54584.txt" />
+                          <option name="source" value="$PROJECT_DIR$/发票派送/寻找发票/extracPDF.onefile-build/ccache-54584.txt" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="35" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="发票派送\寻找发票\extracPDF.onefile-build\static_src\OnefileBootstrap.c: }&#10;#endif&#10;#if !defined(_WIN32) &amp;&amp; !defined(__MSYS__)&#10;static unsigned char readPayloadFileFlagsValue(void) {&#10;    unsigned char result;&#10;    readPayloadChunk(&amp;result, 1);&#10;    return result;&#10;}&#10;#endif&#10;static unsigned long long readPayloadSizeValue(void) {&#10;    unsigned long long result;&#10;    readPayloadChunk(&amp;result, sizeof(unsigned long long));&#10;    return result;&#10;}&#10;#if _NUITKA_ONEFILE_ARCHIVE_BOOL == 1 &amp;&amp; _NUITKA_ONEFILE_COMPRESSION_BOOL == 1&#10;static unsigned long long readArchiveFileSizeValue(void) {&#10;    unsigned long long result;&#10;    readPayloadChunk(&amp;result, sizeof(unsigned int));&#10;    return result;&#10;}&#10;#endif&#10;static filename_char_t readPayloadFilenameCharacter(void) {&#10;    filename_char_t result;&#10;    readPayloadChunk(&amp;result, sizeof(filename_char_t));&#10;    return result;&#10;}&#10;static filename_char_t *readPayloadFilename(void) {&#10;    static filename_char_t buffer[1024];&#10;    filename_char_t *w = buffer;&#10;    for (;;) {&#10;        *w = readPayloadFilenameCharacter();&#10;        if (*w == 0) {&#10;            break;&#10;        }&#10;        w += 1;&#10;    }&#10;    return buffer;&#10;}" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="378" />
+                          <option name="fileName" value="发票派送\寻找发票\extracPDF.onefile-build\static_src\OnefileBootstrap.c" />
+                          <option name="source" value="$PROJECT_DIR$/发票派送/寻找发票/extracPDF.onefile-build/static_src/OnefileBootstrap.c" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="326" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="清洗数据\cleanD.py:     df_refund.loc[df_refund['销售业绩归属类型'] == '团队', '销售-业绩归属'] += '（团队）'&#10;    df_refund.drop(columns='销售业绩归属类型', inplace=True)  # 删除H列&#10;    # 构造文件路径&#10;    file_path = os.path.join(current_dir, '数据清洗.xlsx')&#10;    # 检查文件是否存在，如果不存在则创建一个空的 DataFrame 并保存为 Excel 文件&#10;    if not os.path.exists(file_path):&#10;        # 创建一个空的 DataFrame&#10;        pd.DataFrame().to_excel(file_path, index=False)&#10;    # 使用 ExcelWriter 追加模式打开文件&#10;    with pd.ExcelWriter(file_path, engine='openpyxl', mode='a') as writer:&#10;        df_order.to_excel(writer, sheet_name='新-系统订单', index=False)&#10;        df_refund.to_excel(writer, sheet_name='新-回收欠款', index=False)&#10;def clean_sales_performance():&#10;    # 获取当前工作目录（即exe文件所在目录）&#10;    current_dir = os.getcwd()&#10;    # 构造文件路径&#10;    file_path = os.path.join(current_dir, '数据清洗.xlsx')&#10;    # 读取源数据" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="47" />
+                          <option name="fileName" value="清洗数据\cleanD.py" />
+                          <option name="source" value="$PROJECT_DIR$/清洗数据/cleanD.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="24" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="发票派送\寻找发票\extracPDF.onefile-build\ccache-54584.txt: [2025-02-13T18:39:00.647623 47604] Config: (default) disable = false&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) extra_files_to_hash = &#10;[2025-02-13T18:39:00.647623 47604] Config: (default) file_clone = false&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) hard_link = false&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) hash_dir = true&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) ignore_headers_in_manifest = &#10;[2025-02-13T18:39:00.647623 47604] Config: (default) ignore_options = &#10;[2025-02-13T18:39:00.647623 47604] Config: (default) inode_cache = false&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) keep_comments_cpp = false" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="26" />
+                          <option name="fileName" value="发票派送\寻找发票\extracPDF.onefile-build\ccache-54584.txt" />
+                          <option name="source" value="$PROJECT_DIR$/发票派送/寻找发票/extracPDF.onefile-build/ccache-54584.txt" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="18" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="PersonComparison.py: import pandas as pd&#10;import os&#10;import warnings&#10;import json&#10;# 忽略特定警告&#10;warnings.filterwarnings(&quot;ignore&quot;, message=&quot;Workbook contains no default style, apply openpyxl's default&quot;)&#10;# 读取配置文件&#10;config_path = 'D:\\数据比对\\config.ini'&#10;with open(config_path, 'r', encoding='utf-8') as config_file:&#10;    config = json.load(config_file)&#10;# 从配置文件中获取 id_column, compare_columns, filename_A 和 filename_B&#10;id_column = config.get('id_column')  # 默认值为 '身份证'&#10;compare_columns = config.get('compare_columns')  # 默认值为一个示例列表&#10;filename_A = config.get('filename_A', 'D:\\数据比对\\old.xlsx')  # 默认值为一个示例文件名&#10;filename_B = config.get('filename_B', 'D:\\数据比对\\new.xlsx')  # 默认值为一个示例文件名&#10;# 打印文件名，检查文件名是否正确&#10;print(f&quot;旧文件名: {filename_A}&quot;)&#10;print(f&quot;新文件名: {filename_B}&quot;)&#10;# 检查文件是否存在&#10;if not os.path.exists(filename_A):&#10;    print(f&quot;文件 {filename_A} 不存在。&quot;)&#10;    raise FileNotFoundError(f&quot;文件 {filename_A} 不存在。&quot;)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="26" />
+                          <option name="fileName" value="PersonComparison.py" />
+                          <option name="source" value="$PROJECT_DIR$/PersonComparison.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="发票派送\invoiceDistribu.py:             zip_file_path = os.path.join(root_dir, zip_file_name)&#10;            # 创建ZIP文件&#10;            with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zip_file:&#10;                # 遍历目录中的所有文件&#10;                for root, _, files in os.walk(folder_path):&#10;                    for file in files:&#10;                        file_path = os.path.join(root, file)&#10;                        # 将文件添加到ZIP文件&#10;                        zip_file.write(file_path, os.path.relpath(file_path, root_dir))&#10;    print(&quot;打包完成！&quot;)&#10;def main():&#10;    config_path = os.path.join(os.getcwd(), 'config.ini')&#10;    config = read_config(config_path)&#10;    if config is None:&#10;        return&#10;    file_path = config.get('file_path')&#10;    directory_path = config.get('directory_path')&#10;    workbook_path = os.path.dirname(file_path)&#10;    directory_list = create_directory(workbook_path, file_path)&#10;    if directory_list is not None:&#10;        create_directories(workbook_path, directory_list)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="92" />
+                          <option name="fileName" value="发票派送\invoiceDistribu.py" />
+                          <option name="source" value="$PROJECT_DIR$/发票派送/invoiceDistribu.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="66" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="发票派送\寻找发票\extracPDF.onefile-build\ccache-54584.txt: [2025-02-13T18:39:00.647623 47604] Config: (default) compiler_type = auto&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) compression = true&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) compression_level = 0&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) cpp_extension = &#10;[2025-02-13T18:39:00.647623 47604] Config: (default) debug = false&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) debug_dir = &#10;[2025-02-13T18:39:00.647623 47604] Config: (default) debug_level = 2&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) depend_mode = false&#10;[2025-02-13T18:39:00.647623 47604] Config: (default) direct_mode = true" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="17" />
+                          <option name="fileName" value="发票派送\寻找发票\extracPDF.onefile-build\ccache-54584.txt" />
+                          <option name="source" value="$PROJECT_DIR$/发票派送/寻找发票/extracPDF.onefile-build/ccache-54584.txt" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="9" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="发票派送\寻找发票\extracPDF.build\module.PIL.TiffTags.c:     Py_XDECREF(var_info);&#10;    var_info = NULL;&#10;    // Re-raise.&#10;    exception_state = exception_keeper_name_1;&#10;    exception_lineno = exception_keeper_lineno_1;&#10;    goto function_exception_exit;&#10;    // End of try:&#10;    NUITKA_CANNOT_GET_HERE(&quot;Return statement must have exited already.&quot;);&#10;    return NULL;&#10;function_exception_exit:&#10;    CHECK_OBJECT(par_tag);&#10;    Py_DECREF(par_tag);&#10;    CHECK_OBJECT(par_group);&#10;    Py_DECREF(par_group);&#10;    CHECK_EXCEPTION_STATE(&amp;exception_state);&#10;    RESTORE_ERROR_OCCURRED_STATE(tstate, &amp;exception_state);&#10;    return NULL;&#10;function_return_exit:&#10;   // Function cleanup code if any.&#10;    CHECK_OBJECT(par_tag);&#10;    Py_DECREF(par_tag);&#10;    CHECK_OBJECT(par_group);&#10;    Py_DECREF(par_group);&#10;   // Actual function exit with return value, making sure we did not make&#10;   // the error status worse despite non-NULL return.&#10;   CHECK_OBJECT(tmp_return_value);" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="2415" />
+                          <option name="fileName" value="发票派送\寻找发票\extracPDF.build\module.PIL.TiffTags.c" />
+                          <option name="source" value="$PROJECT_DIR$/发票派送/寻找发票/extracPDF.build/module.PIL.TiffTags.c" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="2384" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml: &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;project version=&quot;4&quot;&gt;&#10;  &lt;component name=&quot;AutoImportSettings&quot;&gt;&#10;    &lt;option name=&quot;autoReloadType&quot; value=&quot;SELECTIVE&quot; /&gt;&#10;  &lt;/component&gt;&#10;  &lt;component name=&quot;ChangeListManager&quot;&gt;&#10;    &lt;list default=&quot;true&quot; id=&quot;de72cd0c-c3f6-4341-8392-75e61b2a3d91&quot; name=&quot;Changes&quot; comment=&quot;新增余伟康涨费表的生成&quot;&gt;&#10;      &lt;change afterPath=&quot;$PROJECT_DIR$/凭证转换/柯恩批改导入模板20250305.xlsx&quot; afterDir=&quot;false&quot; /&gt;&#10;      &lt;change afterPath=&quot;$PROJECT_DIR$/凭证转换/皖信批改导入模板20250305.xlsx&quot; afterDir=&quot;false&quot; /&gt;&#10;      &lt;change beforePath=&quot;$PROJECT_DIR$/.idea/CopilotChatHistory.xml&quot; beforeDir=&quot;false&quot; afterPath=&quot;$PROJECT_DIR$/.idea/CopilotChatHistory.xml&quot; afterDir=&quot;false&quot; /&gt;&#10;      &lt;change beforePath=&quot;$PROJECT_DIR$/余伟康涨费表/web_automation_script.py&quot; beforeDir=&quot;false&quot; afterPath=&quot;$PROJECT_DIR$/余伟康涨费表/web_automation_script.py&quot; afterDir=&quot;false&quot; /&gt;&#10;      &lt;change beforePath=&quot;$PROJECT_DIR$/凭证转换/keToExcel.py&quot; beforeDir=&quot;false&quot; afterPath=&quot;$PROJECT_DIR$/凭证转换/keToExcel.py&quot; afterDir=&quot;false&quot; /&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="12" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="千服日报\MergeData.py: import os&#10;import pandas as pd&#10;from datetime import datetime&#10;import warnings&#10;# 忽略UserWarning警告&#10;warnings.filterwarnings(&quot;ignore&quot;, category=UserWarning, module=&quot;openpyxl&quot;)&#10;# 获取当前日期&#10;today = datetime.today().strftime('%Y-%m-%d')&#10;# 定义目录&#10;directory = r'D:\千服日报'&#10;today_directory = os.path.join(directory, today)&#10;# 如果目录不存在，则创建目录&#10;if not os.path.exists(today_directory):&#10;    os.makedirs(today_directory)&#10;# 初始化数据帧列表&#10;batch_add = []&#10;batch_subtract = []&#10;latest_employee_list = pd.DataFrame()&#10;# 遍历目录中的所有xlsx文件，排除文件名包含“最新雇员清单”的文件&#10;for filename in os.listdir(directory):&#10;    file_path = os.path.join(directory, filename)&#10;    if filename.endswith('.xlsx'):&#10;        if '最新雇员清单' in filename:&#10;            # 读取最新雇员清单&#10;            latest_employee_list = pd.read_excel(file_path, dtype={'证件号码': str})&#10;        elif '最新雇员清单' not in filename:&#10;            # 读取文件，跳过第一行，并将“新雇员证件号码”列设为文本&#10;            df = pd.read_excel(file_path, dtype={'新雇员证件号码': str})&#10;            if '批增' in filename:&#10;                batch_add.append(df)" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="36" />
+                          <option name="fileName" value="千服日报\MergeData.py" />
+                          <option name="source" value="$PROJECT_DIR$/千服日报/MergeData.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value=".idea\workspace.xml:     &lt;option name=&quot;presentableId&quot; value=&quot;LOCAL-00068&quot; /&gt;&#10;    &lt;option name=&quot;project&quot; value=&quot;LOCAL&quot; /&gt;&#10;    &lt;updated&gt;1741083474656&lt;/updated&gt;&#10;  &lt;/task&gt;&#10;  &lt;option name=&quot;localTasksCounter&quot; value=&quot;69&quot; /&gt;&#10;  &lt;servers /&gt;&#10;&lt;/component&gt;&#10;&lt;component name=&quot;TypeScriptGeneratedFilesManager&quot;&gt;&#10;  &lt;option name=&quot;version&quot; value=&quot;3&quot; /&gt;&#10;&lt;/component&gt;&#10;&lt;component name=&quot;Vcs.Log.Tabs.Properties&quot;&gt;&#10;  &lt;option name=&quot;RECENT_FILTERS&quot;&gt;&#10;    &lt;map&gt;&#10;      &lt;entry key=&quot;Branch&quot;&gt;&#10;        &lt;value&gt;&#10;          &lt;list&gt;&#10;            &lt;RecentGroup&gt;&#10;              &lt;option name=&quot;FILTER_VALUES&quot;&gt;&#10;                &lt;option value=&quot;origin/master&quot; /&gt;&#10;              &lt;/option&gt;&#10;            &lt;/RecentGroup&gt;&#10;            &lt;RecentGroup&gt;&#10;              &lt;option name=&quot;FILTER_VALUES&quot;&gt;&#10;                &lt;option value=&quot;master&quot; /&gt;&#10;              &lt;/option&gt;&#10;            &lt;/RecentGroup&gt;&#10;          &lt;/list&gt;&#10;        &lt;/value&gt;&#10;      &lt;/entry&gt;&#10;    &lt;/map&gt;&#10;  &lt;/option&gt;&#10;  &lt;option name=&quot;TAB_STATES&quot;&gt;&#10;    &lt;map&gt;&#10;      &lt;entry key=&quot;MAIN&quot;&gt;&#10;        &lt;value&gt;&#10;          &lt;State&gt;&#10;            &lt;option name=&quot;FILTERS&quot;&gt;&#10;              &lt;map&gt;&#10;                &lt;entry key=&quot;branch&quot;&gt;" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="730" />
+                          <option name="fileName" value=".idea\workspace.xml" />
+                          <option name="source" value="$PROJECT_DIR$/.idea/workspace.xml" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="692" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="MergeData.py: output_file = os.path.join(today_directory, f'{today}.xlsx')&#10;with pd.ExcelWriter(output_file, engine='openpyxl') as writer:&#10;    df_batch_add.to_excel(writer, sheet_name='批增', index=False)&#10;    df_batch_subtract.to_excel(writer, sheet_name='批减', index=False)&#10;    merged_df.to_excel(writer, sheet_name='重复数据', index=False)&#10;    if not replacement_df.empty:&#10;        replacement_df.to_excel(writer, sheet_name='替换数据', index=False)&#10;print(f'数据已成功合并并保存为 {output_file}')" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="141" />
+                          <option name="fileName" value="MergeData.py" />
+                          <option name="source" value="$PROJECT_DIR$/MergeData.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="133" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                    <KnowledgeReference>
+                      <option name="chunk" value="按列分割\test.py: import os&#10;import openpyxl&#10;from openpyxl.worksheet.datavalidation import DataValidation&#10;# 读取整个Excel文件&#10;file_path = r'd:/1.xlsx'  # 替换为你的Excel文件路径&#10;wb = openpyxl.load_workbook(file_path)&#10;ws = wb.active&#10;# 获取每个业务员的唯一值&#10;salesperson_col = [cell.value for cell in ws['B'][1:]]  # 假设“业务员”在A列，从第2行开始&#10;unique_salespersons = set(salesperson_col)&#10;# 定义数据验证规则（普通派遣客户,未指定），确保显示下拉箭头&#10;# dv = DataValidation(type=&quot;list&quot;, formula1='&quot;普通派遣客户,收单客户,代企业投保,其他&quot;', showDropDown=False)&#10;# 遍历每个业务员，并将他们的数据保存到新的Excel文件中&#10;for salesperson in unique_salespersons:&#10;    # 创建一个新的工作簿并复制整个工作表结构&#10;    new_wb = openpyxl.Workbook()&#10;    new_ws = new_wb.active&#10;    # 复制标题行&#10;    for col in ws.iter_cols(min_row=1, max_row=1, values_only=False):&#10;        for cell in col:&#10;            new_ws[cell.coordinate].value = cell.value&#10;    # 复制该业务员的数据行，并为第四列添加数据验证&#10;    row_idx = 2  # 从第二行开始插入数据&#10;    for row in ws.iter_rows(min_row=2, values_only=False):" />
+                      <option name="metadata">
+                        <KnowledgeReferenceMetadata>
+                          <option name="endPos" value="31" />
+                          <option name="fileName" value="按列分割\test.py" />
+                          <option name="source" value="$PROJECT_DIR$/按列分割/test.py" />
+                          <option name="sourceType" value="code" />
+                          <option name="startPos" value="1" />
+                        </KnowledgeReferenceMetadata>
+                      </option>
+                    </KnowledgeReference>
+                  </list>
+                </option>
+                <option name="command" value="" />
+                <option name="conversationId" value="019565c48ad476a8a45851127a933f46" />
+                <option name="historyDocumentMap">
+                  <map />
+                </option>
+                <option name="messageId" value="019565c48ad4712ba5d22af08d610118" />
+                <option name="question" value="详细解释" />
+                <option name="rating" value="UNRATED" />
+                <option name="referenceBeans">
+                  <list />
+                </option>
+                <option name="status" value="SUCCESS" />
+                <option name="variables">
+                  <list />
+                </option>
+              </Turn>
+            </list>
+          </option>
+          <option name="updateTime" value="1741169231615" />
+        </Conversation>
+        <Conversation>
+          <option name="createTime" value="1741161406422" />
+          <option name="id" value="0195654e9fd67d2db8ed9842a48b5257" />
+          <option name="title" value="新对话 2025年3月05日 15:56:46" />
+          <option name="updateTime" value="1741161406422" />
+        </Conversation>
+        <Conversation>
           <option name="createTime" value="1741102331180" />
           <option name="id" value="019561c9352c7830bf1b06783ce362c5" />
           <option name="title" value="新对话 2025年3月04日 23:32:11" />
           <option name="updateTime" value="1741102331180" />
+        </Conversation>
+        <Conversation>
+          <option name="createTime" value="1741144443069" />
+          <option name="id" value="0195644bc8bd7971802ec0edeecd2d6f" />
+          <option name="title" value="新对话 2025年3月05日 11:14:03" />
+          <option name="updateTime" value="1741144443069" />
         </Conversation>
         <Conversation>
           <option name="createTime" value="1741023756167" />
